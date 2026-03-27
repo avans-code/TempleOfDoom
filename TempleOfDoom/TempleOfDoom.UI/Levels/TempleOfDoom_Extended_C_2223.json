@@ -1,0 +1,333 @@
+﻿{
+	"rooms": [
+		{
+			"id": 1,
+			"type": "room",
+			"width": 5,
+			"height": 5
+		},
+		{
+			"id": 2,
+			"type": "room",
+			"width": 7,
+			"height": 5,
+			"items": [
+				{
+					"type": "pressure plate",
+					"x": 1,
+					"y": 2
+				},
+				{
+					"type": "pressure plate",
+					"x": 5,
+					"y": 2
+				}
+			],
+			"enemies": [
+				{
+					"type": "horizontal",
+					"x": 4,
+					"y": 2,
+					"minX": 1,
+					"minY": 2,
+					"maxX": 5,
+					"maxY": 2
+				}
+			]
+		},
+		{
+			"id": 3,
+			"type": "room",
+			"width": 5,
+			"height": 5,
+			"items": [
+				{
+					"type": "disappearing boobytrap",
+					"damage": 1,
+					"x": 2,
+					"y": 1
+				},
+				{
+					"type": "sankara stone",
+					"x": 2,
+					"y": 2
+				}
+			]
+		},
+		{
+			"id": 4,
+			"type": "room",
+			"width": 11,
+			"height": 7,
+			"items": [
+				{
+					"type": "key",
+					"color": "green",
+					"x": 1,
+					"y": 1
+				},
+				{
+					"type": "sankara stone",
+					"x": 9,
+					"y": 1
+				},
+				{
+					"type": "boobytrap",
+					"damage": 1,
+					"x": 4,
+					"y": 2
+				},
+				{
+					"type": "boobytrap",
+					"damage": 1,
+					"x": 5,
+					"y": 2
+				},
+				{
+					"type": "boobytrap",
+					"damage": 1,
+					"x": 6,
+					"y": 2
+				},
+				{
+					"type": "boobytrap",
+					"damage": 1,
+					"x": 4,
+					"y": 4
+				},
+				{
+					"type": "boobytrap",
+					"damage": 1,
+					"x": 5,
+					"y": 4
+				},
+				{
+					"type": "boobytrap",
+					"damage": 1,
+					"x": 6,
+					"y": 4
+				},
+				{
+					"type": "pressure plate",
+					"x": 5,
+					"y": 3
+				}
+			],
+			"enemies": [
+				{
+					"type": "horizontal",
+					"x": 2,
+					"y": 5,
+					"minX": 2,
+					"minY": 5,
+					"maxX": 7,
+					"maxY": 5
+				}
+			],
+			"specialFloorTiles": [
+				{
+				   "type": "wall",
+				   "x": 8,
+				   "y": 1
+				},
+				{
+					"type": "wall",
+					"x": 8,
+					"y": 2
+				},
+				{
+					"type": "innerdoor",
+					"x": 9,
+					"y": 2
+				}
+			 ]
+		  
+		},
+		{
+			"id": 5,
+			"type": "room",
+			"width": 5,
+			"height": 5,
+			"items": [
+				{
+					"type": "key",
+					"color": "red",
+					"x": 2,
+					"y": 3
+				},
+				{
+					"type": "sankara stone",
+					"x": 2,
+					"y": 2
+				}
+			]
+		},
+		{
+			"id": 6,
+			"type": "room",
+			"width": 3,
+			"height": 3,
+			"items": [
+				{
+					"type": "sankara stone",
+					"x": 1,
+					"y": 1
+				}
+			]
+		},
+		{
+			"id": 7,
+			"type": "room",
+			"width": 5,
+			"height": 3,
+			"items": [
+				{
+					"type": "pressure plate",
+					"x": 2,
+					"y": 1
+				}
+			]
+		},
+		{
+			"id": 8,
+			"type": "room",
+			"width": 3,
+			"height": 3
+		},
+		{
+			"id": 9,
+			"type": "room",
+			"width": 5,
+			"height": 5,
+			"items": [
+				{
+					"type": "sankara stone",
+					"x": 2,
+					"y": 2
+				},
+				{
+					"type": "boobytrap",
+					"damage": 1,
+					"x": 1,
+					"y": 3
+				},
+				{
+					"type": "boobytrap",
+					"damage": 1,
+					"x": 2,
+					"y": 3
+				},
+				{
+					"type": "boobytrap",
+					"damage": 1,
+					"x": 3,
+					"y": 3
+				}
+			]
+		}
+	],
+	"connections": [
+		{
+			"NORTH": 1,
+			"SOUTH": 2,
+			"horizontal": true,
+			"doors": []
+		},
+		{
+			"NORTH": 2,
+			"SOUTH": 3,
+			"horizontal": true,
+			"doors": [
+				{
+					"type": "switched"
+				}
+			]
+		},
+		{
+			"WEST": 1,
+			"EAST": 4,
+			"horizontal": false,
+			"doors": []
+		},
+		{
+			"NORTH": 4,
+			"SOUTH": 5,
+			"horizontal": true,
+			"doors": [
+				{
+					"type": "colored",
+					"color": "green"
+				},
+				{
+					"type": "open on odd"
+				}
+			]
+		},
+		{
+			"WEST": 4,
+			"EAST": 7,
+			"horizontal": false,
+			"doors": [
+				{
+					"type": "colored",
+					"color": "red"
+				},
+				{
+					"type": "open on odd"
+				}
+			]
+		},
+		{
+			"NORTH": 6,
+			"SOUTH": 7,
+			"horizontal": true,
+			"doors": [
+				{
+					"type": "toggle"
+				}
+			]
+		},
+		{
+			"NORTH": 7,
+			"SOUTH": 8,
+			"horizontal": true,
+			"doors": [
+				{
+					"type": "toggle"
+				},
+				{
+					"type": "open on odd"
+				}
+			]
+		},
+		{
+			"NORTH": 8,
+			"SOUTH": 9,
+			"horizontal": true,
+			"doors": [
+				{
+					"type": "closing gate"
+				}
+			]
+		},
+		{
+			"within": 4,
+			"horizontal": true,
+			"doors": [
+				{
+					"type": "colored",
+					"color": "red"
+				},
+				{
+					"type": "toggle"
+				}
+			]
+		}
+	],
+	"player": {
+		"startRoomId": 1,
+		"startX": 2,
+		"startY": 2,
+		"lives": 3
+	}
+}

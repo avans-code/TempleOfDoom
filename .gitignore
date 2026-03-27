@@ -53,3 +53,8 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+[Bb]in/
+[Oo]bj/
+.idea/
+*.user
