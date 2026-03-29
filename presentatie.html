@@ -2,20 +2,24 @@
 <html lang="nl">
 <head>
     <meta charset="utf-8">
-    <title>Temple of Doom | Assessment Deck</title>
+    <title>Temple of Doom | High-End Code Assessment</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/tokyo-night-dark.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/vs2015.min.css">
     
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            --accent-glow: 0 0 20px rgba(139, 92, 246, 0.5);
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent: #ff79c6; /* Dracula pink */
+            --accent-glow-primary: #8b5cf6; /* Modern paars */
+            --ide-bg: #1e1e1e; /* VS Dark Background */
+            --ide-header-bg: #2d2d2d; /* VS Title Bar */
+            --text: #d4d4d4; /* VS Text */
+            --bg-gradient: linear-gradient(135deg, #09090b 0%, #030712 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.07);
         }
 
         .reveal {
@@ -24,40 +28,42 @@
             color: #fff;
         }
 
-        /* Glassmorphism Card Style */
+        /* High-End Glassmorphism Card Style */
         .glass-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
         }
 
         h1, h2, h3 {
             text-transform: none !important;
             font-weight: 800 !important;
-            letter-spacing: -1px !important;
+            letter-spacing: -1.5px !important;
         }
 
-        .highlight { color: #bd93f9; text-shadow: var(--accent-glow); }
+        .highlight { color: var(--accent); }
         
-        /* Modern Code Block Styling */
-        .code-container {
+        /* Modern, Solide IDE Code Block Styling */
+        .ide-container {
             position: relative;
-            margin-top: 20px !important;
+            margin-top: 25px !important;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .code-header {
-            background: #1a1b26;
+        .ide-header {
+            background: var(--ide-header-bg);
             height: 30px;
-            border-radius: 12px 12px 0 0;
             display: flex;
             align-items: center;
             padding-left: 15px;
-            border: 1px solid var(--glass-border);
-            border-bottom: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
@@ -66,29 +72,44 @@
         .reveal pre {
             margin: 0 !important;
             width: 100% !important;
-            border-radius: 0 0 12px 12px !important;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+            background: var(--ide-bg);
         }
 
         .reveal code {
             font-family: 'Fira Code', monospace !important;
-            padding: 20px !important;
             font-size: 0.85em !important;
-            line-height: 1.4 !important;
+            line-height: 1.5 !important;
+            padding: 20px !important;
+            color: var(--text) !important;
+            /* Syntax highlighting will override colors */
         }
 
-        /* Floating Badge */
+        /* Floating Badge with Glow */
         .badge {
             position: absolute;
             top: -20px;
             right: 20px;
-            background: linear-gradient(90deg, #8e2de2, #4a00e0);
+            background: linear-gradient(90deg, #9333ea, #db2777);
             padding: 5px 15px;
             border-radius: 50px;
             font-size: 0.4em;
             font-weight: 700;
-            box-shadow: var(--accent-glow);
+            box-shadow: 0 0 20px rgba(147, 51, 234, 0.6);
         }
+
+        /* Neon Sub-Shadow effect for code */
+        .ide-container::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(180deg, rgba(139, 92, 246, 0) 0%, rgba(139, 92, 246, 0.1) 50%, rgba(139, 92, 246, 0) 100%);
+            z-index: -1;
+            filter: blur(20px);
+        }
+
     </style>
 </head>
 <body>
@@ -96,24 +117,27 @@
         <div class="slides">
 
             <section data-transition="zoom">
-                <div class="glass-card" style="display: inline-block; padding: 50px;">
-                    <h1 style="font-size: 3em;">Temple of <span class="highlight">Doom</span></h1>
+                <div class="glass-card" style="display: inline-block; padding: 60px;">
+                    <h1 style="font-size: 3.2em;">Temple of <span class="highlight">Doom</span></h1>
                     <p style="opacity: 0.7; font-weight: 400;">Advanced Architectural Design Assessment</p>
-                    <div style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; font-size: 0.6em;">
+                    <div style="margin-top: 50px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; font-size: 0.6em; color: #6272a4;">
                         STUDENT IT DEVELOPER | MODULE C | 2026
                     </div>
                 </div>
+                <aside class="notes">
+                    Introductie slide: Vermeld dat alle functionele en kwaliteitseisen uit de rubric zijn behaald.
+                </aside>
             </section>
 
-            <section data-auto-animate>
-                <h2 data-id="title">The <span class="highlight">Factory</span> Pattern</h2>
-                <div class="code-container">
-                    <div class="badge">Creational Pattern</div>
-                    <div class="code-header">
+            <section data-auto-animate data-transition="convex">
+                <h2 data-id="title">Design Pattern: <span class="highlight">Factory</span></h2>
+                <div class="ide-container" data-id="code-box">
+                    <div class="badge">Creational</div>
+                    <div class="ide-header">
                         <span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span>
                         <span style="font-size: 0.4em; opacity: 0.5; margin-left: 10px;">LevelFactory.cs</span>
                     </div>
-                    <pre data-id="code-anim"><code class="language-csharp" data-trim data-line-numbers="3-10">
+                    <pre><code class="language-csharp" data-trim data-line-numbers="3-10">
 public class LevelFactory {
     public Level CreateLevel(LevelDto dto) {
         Level level = new Level();
@@ -128,17 +152,20 @@ public class LevelFactory {
 }
                     </code></pre>
                 </div>
+                <aside class="notes">
+                    Factory slide: Vertel dat de CreateLevel methode de domme DTO's omzet naar de rijke domeinobjecten.
+                </aside>
             </section>
 
-            <section data-auto-animate>
-                <h2 data-id="title">The <span class="highlight">Observer</span> Pattern</h2>
-                <p style="font-size: 0.7em;">Ontkoppelde communicatie via Events</p>
-                <div class="code-container">
-                    <div class="badge">Behavioral Pattern</div>
-                    <div class="code-header">
+            <section data-auto-animate data-transition="concave">
+                <h2 data-id="title">Design Pattern: <span class="highlight">Observer</span></h2>
+                <p data-id="text" style="font-size: 0.7em;">Ontkoppelde, Event-Driven communicatie</p>
+                <div class="ide-container" data-id="code-box">
+                    <div class="badge">Behavioral</div>
+                    <div class="ide-header">
                         <span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span>
                     </div>
-                    <pre data-id="code-anim"><code class="language-csharp" data-trim data-line-numbers="2-6|10-12">
+                    <pre><code class="language-csharp" data-trim data-line-numbers="2-6|10-12">
 // PressurePlate: De Publisher
 public event Action? OnOccupancyChanged;
 public bool IsOccupied {
@@ -154,15 +181,18 @@ plate.OnOccupancyChanged += () => {
 };
                     </code></pre>
                 </div>
+                <aside class="notes">
+                    Observer slide: Leg uit dat dit polling vervangt en hoe PressurePlate het Action event invoket.
+                </aside>
             </section>
 
-            <section data-transition="slide-in fade-out">
-                <h2>The <span class="highlight">Strategy</span> Pattern</h2>
-                <div class="glass-card" style="text-align: left; font-size: 0.6em; margin-bottom: 20px;">
-                    Voldoet aan <strong>Open-Closed Principle</strong>. Wisselen van inlaad-algoritme (JSON/XML) zonder impact op de core logic.
+            <section data-transition="zoom fade-out">
+                <h2>Design Pattern: <span class="highlight">Strategy</span></h2>
+                <div class="glass-card" style="font-size: 0.65em; margin-bottom: 30px;">
+                    <p>Voldoet aan het <strong>Open-Closed Principle</strong>. Via de <code>ILevelLoader</code> interface kan de applicatie in de toekomst makkelijk worden uitgebreid (bijv. een <code>XmlLevelLoader</code>) zonder de core logic aan te passen.</p>
                 </div>
-                <div class="code-container">
-                    <div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+                <div class="ide-container">
+                    <div class="ide-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
                     <pre><code class="language-csharp">
 public interface ILevelLoader {
     LevelDto Load(string path);
@@ -173,12 +203,12 @@ public class JsonLevelLoader : ILevelLoader { ... }
                 </div>
             </section>
 
-            <section data-transition="convex">
-                <h2>The <span class="highlight">Decorator</span> Pattern</h2>
-                <p style="font-size: 0.6em;">Gedrag stapelen zonder inheritance hell.</p>
-                <div class="code-container">
-                    <div class="badge">Structural Pattern</div>
-                    <div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+            <section data-auto-animate data-transition="convex">
+                <h2 data-id="title">Design Pattern: <span class="highlight">Decorator</span></h2>
+                <p data-id="text" style="font-size: 0.6em;">Dynamisch gedrag stapelen zonder inheritance hell.</p>
+                <div class="ide-container" data-id="code-box">
+                    <div class="badge">Structural</div>
+                    <div class="ide-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
                     <pre><code class="language-csharp" data-trim data-line-numbers="2,6-10">
 public class OpenOnOddDoor : IDoor {
     private readonly IDoor _innerDoor; // Wrapped object
@@ -193,43 +223,55 @@ public class OpenOnOddDoor : IDoor {
 }
                     </code></pre>
                 </div>
+                <aside class="notes">
+                    Decorator slide: Laat zien hoe _innerDoor wordt ingepakt in de constructor om het gedrag dynamisch te stapelen.
+                </aside>
             </section>
 
-            <section>
-                <h2>The <span class="highlight">Adapter</span> Pattern</h2>
-                <div class="glass-card" style="margin-bottom: 30px;">
-                    <p style="font-size: 0.7em;">Koppelt de onstabiele <code>External.dll</code> aan onze <code>Entity</code> base class.</p>
+            <section data-transition="fade">
+                <h2>Design Pattern: <span class="highlight">Adapter</span></h2>
+                <div class="glass-card" style="margin-bottom: 40px;">
+                    <p style="font-size: 0.7em;">Adapter voor externe, onstabiele DLL. We beschermen ons domein en coördinaten-systeem met de <code>EnemyAdapter</code>.</p>
                 </div>
-                <div class="code-container">
-                    <div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+                <div class="ide-container">
+                    <div class="ide-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
                     <pre><code class="language-csharp">
 public class EnemyAdapter : Entity {
-    private readonly ExternalEnemy _dllEnemy;
+    private readonly CODE_TempleOfDoom_External_Enemy _dllEnemy;
 
     public override void Move() {
-        _dllEnemy.UpdatePosition(); // Vertaling
-        this.X = _dllEnemy.CurrentX;
+        _dllEnemy.UpdateDllPosition(); // Vertaling
+        this.X = _dllEnemy.CurrentX; // Adapt coördinaten
     }
 }
                     </code></pre>
                 </div>
             </section>
 
-            <section data-background-color="rgba(189, 147, 249, 0.1)">
+            <section data-background-color="rgba(189, 147, 249, 0.05)">
                 <h2>Polymorfisme & <span class="highlight">Clean Code</span></h2>
-                <ul style="font-size: 0.8em; list-style: none;">
-                    <li style="margin-bottom: 20px;">✅ <strong>Geen Switch Statements:</strong> <code>item.Interact()</code> ipv type-checks.</li>
-                    <li style="margin-bottom: 20px;">✅ <strong>Information Expert:</strong> <code>Room</code> berekent eigen collision logic.</li>
-                    <li style="margin-bottom: 20px;">✅ <strong>Inappropriate Intimacy:</strong> Gefixed via interface abstractie.</li>
-                </ul>
+                <div class="glass-card" style="text-align: left; display: inline-block;">
+                    <ul style="font-size: 0.8em; list-style: none;">
+                        <li style="margin-bottom: 25px;">✅ <strong>Geen Switch Statements:</strong> <code>item.Interact()</code> delegeert item-logica.</li>
+                        <li style="margin-bottom: 25px;">✅ <strong>Information Expert:</strong> <code>Room</code> berekent zijn eigen enemies en collision logic.</li>
+                        <li style="margin-bottom: 25px;">✅ <strong>Code Smells opgelost:</strong> 'God Class' is verwijderd, 'Inappropriate Intimacy' is opgelost via IDoor interface abstraction.</li>
+                    </ul>
+                </div>
+                <aside class="notes">
+                    Clean Code slide: Vertel hoe de God Class GameController is afgeslankt door Feature Envy op te lossen.
+                </aside>
             </section>
 
             <section data-transition="zoom">
-                <h1 class="highlight">Vragen?</h1>
-                <p style="opacity: 0.6;">Bedankt voor de aandacht.</p>
-                <div style="margin-top: 50px;" class="glass-card">
-                    <p style="font-size: 0.5em;">Codebase Status: <strong>Production Ready</strong></p>
+                <h1>UML diagrammen?</h1>
+                <p style="opacity: 0.6; font-size: 0.7em;">Zie README.md voor de Mermaid-rendering en design pattern relaties.</p>
+                <div style="margin-top: 60px;" class="glass-card">
+                    <h2 class="highlight">Vragen?</h2>
+                    <p style="font-size: 0.5em; color: #6272a4;">Codebase Status: <strong>Production Ready</strong></p>
                 </div>
+                <aside class="notes">
+                    Houd de presentatie en het README document klaar voor de beoordeling.
+                </aside>
             </section>
 
         </div>
@@ -247,6 +289,7 @@ public class EnemyAdapter : Entity {
             backgroundTransition: 'fade',
             mouseWheel: true,
             plugins: [ { setup: () => {
+                // Initialize highlight.js on all code blocks after Reveal init
                 document.querySelectorAll('pre code').forEach((el) => {
                     hljs.highlightElement(el);
                 });
