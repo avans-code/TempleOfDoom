@@ -76,32 +76,25 @@ public class ConsoleRenderer
             // Check if connection can be entered (door is open)
             bool canEnter = conn?.CanEnter(level.Player, room) ?? false;
             
-            if (!canEnter)
-            {
-                // Door is closed, show appropriate symbol
-                var doorType = conn?.Doors.FirstOrDefault();
-                if (doorType is ColoredDoor coloredDoor)
-                {
-                    doorChar = '=';
-                    doorColor = GetConsoleColor(coloredDoor.Color);
-                }
-                else if (doorType is ClosingGate)
-                {
-                    doorChar = 'n';
-                }
-                else if (doorType is SwitchDoor)
-                {
-                    doorChar = '┴';
-                }
-                else if (doorType is ToggleDoor)
-                {
-                    doorChar = '┴';
-                }
-                else
-                {
-                    doorChar = '┴'; // Default closed door symbol
-                }
-            }
+if (!canEnter)
+{
+    // Door is closed, show appropriate symbol
+    var doorType = conn?.Doors.FirstOrDefault();
+    
+    switch (doorType)
+    {
+        case ColoredDoor coloredDoor:
+            doorChar = '=';
+            doorColor = GetConsoleColor(coloredDoor.Color);
+            break;
+        case ClosingGate:
+            doorChar = 'n';
+            break;
+        default:
+            doorChar = '┴';
+            break;
+    }
+}
             // If canEnter is true, doorChar remains ' ' (space)
         
             // Handle inner doors specifically

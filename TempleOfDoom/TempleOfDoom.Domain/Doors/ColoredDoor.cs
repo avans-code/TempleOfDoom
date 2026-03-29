@@ -2,27 +2,20 @@ using TempleOfDoom.Domain.Models;
 
 namespace TempleOfDoom.Domain.Doors;
 
-public class ColoredDoor : IDoor
+public class ColoredDoor(string color) : IDoor
 {
-    public string Color { get; }
-    public bool IsOpen { get; private set; } = false;
-
-    public ColoredDoor(string color)
-    {
-        Color = color;
-    }
+    public string Color { get; } = color;
+    public bool IsOpen { get; private set; }
 
     public bool CanEnter(Player player, Room currentRoom)
     {
         if (IsOpen) return true;
-        
-        if (player.HasKey(Color))
-        {
-            IsOpen = true;
-            return true;
-        }
-        
-        return false;
+    
+        if (!player.HasKey(Color))
+            return false;
+    
+        IsOpen = true;
+        return true;
     }
 
     public void OnEnter() { }

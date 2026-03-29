@@ -8,7 +8,7 @@ namespace TempleOfDoom.UI;
 
 class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
         try
         {
@@ -34,10 +34,7 @@ class Program
             // Game Over Scherm
             renderer.Render(gameController.CurrentLevel);
             Console.WriteLine("\n=============================");
-            if (level.Player.StonesCollected >= 5)
-                Console.WriteLine("GEWONNEN! Je hebt de tempel overleefd.");
-            else
-                Console.WriteLine("GAME OVER! Je bent dood.");
+            Console.WriteLine(level.Player.StonesCollected >= 5 ? "Gefeliciteerd, je hebt gewonnen!" : "Game Over!");
             Console.WriteLine("=============================");
             
             Console.ReadKey();

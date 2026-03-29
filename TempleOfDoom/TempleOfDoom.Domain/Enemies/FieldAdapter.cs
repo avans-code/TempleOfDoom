@@ -6,9 +6,8 @@ namespace TempleOfDoom.Domain.Enemies;
 public class FieldAdapter : IField
 {
     public bool CanEnter => true;
-    public IPlacable Item { get; set; }
+    public IPlacable? Item { get; set; }
 
-    // We returneren onszelf zodat de DLL nooit een NullReference krijgt als hij naar de buurman vraagt
     public IField GetNeighbour(int direction)
     {
         return this;

@@ -4,7 +4,8 @@ namespace TempleOfDoom.Domain.Doors;
 
 public class SwitchDoor : IDoor
 {
-    public bool IsOpen { get; private set; } = false;
+    // = false; is weggehaald
+    public bool IsOpen { get; private set; }
 
     public void Unlock()
     {

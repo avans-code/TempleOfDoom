@@ -1,4 +1,3 @@
-using System.Linq;
 using TempleOfDoom.Domain.Models;
 using TempleOfDoom.Domain.Items;
 
@@ -6,7 +5,7 @@ namespace TempleOfDoom.Domain.Doors;
 
 public class ToggleDoor : IDoor
 {
-    public bool IsOpen { get; set; } = false;
+    private bool IsOpen { get; set; }
 
     public bool CanEnter(Player player, Room currentRoom)
     {

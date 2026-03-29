@@ -39,7 +39,7 @@ public class LevelFactory
                         dllEnemy = new CODE_TempleOfDoom_DownloadableContent.VerticallyMovingEnemy(3, enemyDto.x, enemyDto.y, enemyDto.minY, enemyDto.maxY);
 
                     if (dllEnemy != null)
-                        room.Entities.Add(new TempleOfDoom.Domain.Enemies.EnemyAdapter(dllEnemy, enemyDto.x, enemyDto.y));
+                        room.Entities.Add(new Domain.Enemies.EnemyAdapter(dllEnemy, enemyDto.x, enemyDto.y));
                 }
             }
 
@@ -51,18 +51,18 @@ public class LevelFactory
                     switch (itemDto.type.ToLower())
                     {
                         case "sankara stone":
-                            room.Entities.Add(new TempleOfDoom.Domain.Items.SankaraStone(itemDto.x, itemDto.y));
+                            room.Entities.Add(new Domain.Items.SankaraStone(itemDto.x, itemDto.y));
                             break;
                         case "key":
-                            room.Entities.Add(new TempleOfDoom.Domain.Items.Key(itemDto.x, itemDto.y, itemDto.color ?? ""));
+                            room.Entities.Add(new Domain.Items.Key(itemDto.x, itemDto.y, itemDto.color ?? ""));
                             break;
                         case "boobytrap":
                         case "disappearing boobytrap":
                             bool isDisappearing = itemDto.type.ToLower().Contains("disappearing");
-                            room.Entities.Add(new TempleOfDoom.Domain.Items.Boobytrap(itemDto.x, itemDto.y, itemDto.damage ?? 1, isDisappearing));
+                            room.Entities.Add(new Domain.Items.Boobytrap(itemDto.x, itemDto.y, itemDto.damage ?? 1, isDisappearing));
                             break;
                         case "pressure plate":
-                            room.Entities.Add(new TempleOfDoom.Domain.Items.PressurePlate(itemDto.x, itemDto.y));
+                            room.Entities.Add(new Domain.Items.PressurePlate(itemDto.x, itemDto.y));
                             break;
                     }
                 }
@@ -74,7 +74,7 @@ public class LevelFactory
         // Process connections AFTER all rooms are created
         foreach (var connDto in dto.connections)
         {
-            List<TempleOfDoom.Domain.Doors.IDoor> parsedDoors = new();
+            List<Domain.Doors.IDoor> parsedDoors = new();
             
             if (connDto.doors != null)
             {
@@ -83,19 +83,19 @@ public class LevelFactory
                     switch (doorDto.type.ToLower())
                     {
                         case "colored": 
-                            parsedDoors.Add(new TempleOfDoom.Domain.Doors.ColoredDoor(doorDto.color ?? "")); 
+                            parsedDoors.Add(new Domain.Doors.ColoredDoor(doorDto.color ?? "")); 
                             break;
                         case "toggle": 
-                            parsedDoors.Add(new TempleOfDoom.Domain.Doors.ToggleDoor()); 
+                            parsedDoors.Add(new Domain.Doors.ToggleDoor()); 
                             break;
                         case "closing gate": 
-                            parsedDoors.Add(new TempleOfDoom.Domain.Doors.ClosingGate()); 
+                            parsedDoors.Add(new Domain.Doors.ClosingGate()); 
                             break;
                         case "switched": 
-                            parsedDoors.Add(new TempleOfDoom.Domain.Doors.SwitchDoor()); 
+                            parsedDoors.Add(new Domain.Doors.SwitchDoor()); 
                             break;
                         case "open on odd": 
-                            parsedDoors.Add(new TempleOfDoom.Domain.Doors.OpenOnOddDoor(level)); 
+                            parsedDoors.Add(new Domain.Doors.OpenOnOddDoor(level)); 
                             break;
                     }
                 }
@@ -107,11 +107,11 @@ public class LevelFactory
                 var roomN = level.Rooms[connDto.NORTH.Value];
                 var roomS = level.Rooms[connDto.SOUTH.Value];
 
-                var connToS = new TempleOfDoom.Domain.Models.Connection(roomS);
+                var connToS = new Connection(roomS);
                 connToS.Doors.AddRange(parsedDoors);
                 roomN.OutgoingConnections.Add("SOUTH", connToS);
 
-                var connToN = new TempleOfDoom.Domain.Models.Connection(roomN);
+                var connToN = new Connection(roomN);
                 connToN.Doors.AddRange(parsedDoors);
                 roomS.OutgoingConnections.Add("NORTH", connToN);
             }
@@ -121,11 +121,11 @@ public class LevelFactory
                 var roomW = level.Rooms[connDto.WEST.Value];
                 var roomE = level.Rooms[connDto.EAST.Value];
 
-                var connToE = new TempleOfDoom.Domain.Models.Connection(roomE);
+                var connToE = new Connection(roomE);
                 connToE.Doors.AddRange(parsedDoors);
                 roomW.OutgoingConnections.Add("EAST", connToE);
 
-                var connToW = new TempleOfDoom.Domain.Models.Connection(roomW);
+                var connToW = new Connection(roomW);
                 connToW.Doors.AddRange(parsedDoors);
                 roomE.OutgoingConnections.Add("WEST", connToW);
             }
@@ -138,7 +138,7 @@ public class LevelFactory
                 // For inner doors, we need to create a special connection
                 // This represents the inner door in room 4 (position x=9, y=2)
                 // The doors array contains the requirements to open this inner door
-                var innerConnection = new TempleOfDoom.Domain.Models.Connection(room); // Points to same room
+                var innerConnection = new Connection(room); // Points to same room
                 innerConnection.Doors.AddRange(parsedDoors);
                 
                 // Store this as a special connection that can be checked when moving through inner doors
