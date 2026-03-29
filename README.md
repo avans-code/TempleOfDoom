@@ -1,5 +1,6 @@
 # TempleOfDoom
 
+mermaid```
 classDiagram
     %% Factory Pattern
     class LevelFactory {
@@ -201,3 +202,4 @@ classDiagram
     
     %% Observer Dependency
     PressurePlate ..> GameController : invokes event
+```
