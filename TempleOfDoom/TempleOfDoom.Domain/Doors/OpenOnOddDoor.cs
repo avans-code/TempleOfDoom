@@ -11,6 +11,8 @@ public class OpenOnOddDoor : IDoor
         _level = level;
     }
 
+    public bool IsOpen => _level.StepCount % 2 != 0;
+
     public bool CanEnter(Player player, Room room)
     {
         return _level.StepCount % 2 != 0; // Alleen waar bij oneven stappen
