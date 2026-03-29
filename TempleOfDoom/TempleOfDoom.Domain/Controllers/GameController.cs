@@ -1,6 +1,8 @@
+using System.Reflection;
 using TempleOfDoom.Domain.Models;
 using TempleOfDoom.Domain.Enemies;
 using TempleOfDoom.Domain.Items;
+using TempleOfDoom.Domain.Doors;
 
 namespace TempleOfDoom.Domain.Controllers;
 
@@ -23,7 +25,6 @@ public class GameController
         int targetY = _level.Player.Y;
         string direction = "";
 
-        // Bepaal de nieuwe doelpositie en richting
         switch (key)
         {
             case ConsoleKey.UpArrow: targetY--; direction = "NORTH"; break;
@@ -33,42 +34,91 @@ public class GameController
             case ConsoleKey.Spacebar:
                 Shoot();
                 MoveEnemies();
+                CheckSwitchDoors();
                 return; 
         }
         
         Room currentRoom = _level.CurrentRoom;
         
-        // Ga pas naar de volgende kamer als je VAN de deur af stapt (buiten de map)
         if (targetX < 0 || targetX >= currentRoom.Width || targetY < 0 || targetY >= currentRoom.Height)
         {
             TryTransitionRoom(direction, targetX, targetY);
             MoveEnemies();
+            CheckSwitchDoors();
             return;
         }
 
-        // Check of we mogen lopen (binnen de kamer of op de open deur)
         if (CanMoveTo(targetX, targetY))
         {
             _level.Player.X = targetX;
             _level.Player.Y = targetY;
             HandleItemPickup();
             
-            // Check collision after player moves into an enemy
             if (_level.CurrentRoom.Entities.OfType<EnemyAdapter>().Any(e => e.X == _level.Player.X && e.Y == _level.Player.Y))
             {
                 _level.Player.TakeDamage(1);
             }
         }
 
-        // Vijanden bewegen ALTIJD na een speler-actie
         MoveEnemies();
+        
+        // Snapshot van de kamer na alle bewegingen voor de simultane puzzel
+        CheckSwitchDoors();
+    }
+
+    private void CheckSwitchDoors()
+    {
+        Room currentRoom = _level.CurrentRoom;
+        var plates = currentRoom.Entities.OfType<PressurePlate>().ToList();
+
+        if (plates.Count > 0)
+        {
+            // Check of op ELKE plate in deze kamer exact NU iemand staat (Speler of Vijand)
+            bool allPlatesOccupied = plates.All(p => 
+                (_level.Player.X == p.X && _level.Player.Y == p.Y) || 
+                currentRoom.Entities.OfType<EnemyAdapter>().Any(e => e.X == p.X && e.Y == p.Y)
+            );
+
+            if (allPlatesOccupied)
+            {
+                // Ontgrendel permanent alle SwitchDoors in de connecties
+                foreach (var connection in currentRoom.OutgoingConnections.Values)
+                {
+                    UnlockSwitchDoorsRecursive(connection.Doors);
+                }
+            }
+        }
+    }
+
+    private void UnlockSwitchDoorsRecursive(IEnumerable<IDoor> doors)
+    {
+        foreach (var door in doors)
+        {
+            if (door is SwitchDoor sd)
+            {
+                sd.Unlock();
+            }
+            else
+            {
+                // Zoek via reflection in decorators (zoals OpenOnOddDoor) naar een verstopte SwitchDoor
+                var innerDoorProp = door.GetType().GetProperty("InnerDoor") ?? 
+                                    door.GetType().GetProperty("_innerDoor", BindingFlags.NonPublic | BindingFlags.Instance);
+                
+                if (innerDoorProp != null)
+                {
+                    if (innerDoorProp.GetValue(door) is IDoor innerDoor)
+                    {
+                        UnlockSwitchDoorsRecursive(new[] { innerDoor });
+                    }
+                }
+            }
+        }
     }
 
     private void TryTransitionRoom(string direction, int targetX, int targetY)
     {
         Room currentRoom = _level.CurrentRoom;
         
-        // Check of je daadwerkelijk door de deur-opening naar buiten stapte
         bool isAtDoor = false;
         if (direction == "NORTH" && targetX == currentRoom.Width / 2 && targetY < 0) isAtDoor = true;
         if (direction == "SOUTH" && targetX == currentRoom.Width / 2 && targetY >= currentRoom.Height) isAtDoor = true;
@@ -86,7 +136,6 @@ public class GameController
                 connection.OnEnter();
                 _level.CurrentRoomId = connection.TargetRoom.Id;
                 
-                // Positioneer speler OP de tegel van de deur in de nieuwe kamer
                 if (direction == "NORTH") { _level.Player.Y = connection.TargetRoom.Height - 1; _level.Player.X = connection.TargetRoom.Width / 2; }
                 if (direction == "SOUTH") { _level.Player.Y = 0; _level.Player.X = connection.TargetRoom.Width / 2; }
                 if (direction == "WEST") { _level.Player.X = connection.TargetRoom.Width - 1; _level.Player.Y = connection.TargetRoom.Height / 2; }
@@ -99,7 +148,6 @@ public class GameController
     {
         Room currentRoom = _level.CurrentRoom;
 
-        // 1. Check Buitenmuren (en of we OP een buitendeur mogen staan)
         if (currentRoom.IsWall(x, y))
         {
             bool isEdgeDoor = false;
@@ -110,7 +158,6 @@ public class GameController
             else if (x == 0 && y == currentRoom.Height / 2) { isEdgeDoor = true; dir = "WEST"; }
             else if (x == currentRoom.Width - 1 && y == currentRoom.Height / 2) { isEdgeDoor = true; dir = "EAST"; }
 
-            // Als het een buitendeur is, mag je er op staan MITS de deur open is
             if (isEdgeDoor && currentRoom.OutgoingConnections.ContainsKey(dir))
             {
                 var connection = currentRoom.OutgoingConnections[dir];
@@ -119,16 +166,15 @@ public class GameController
                     return true;
                 }
             }
-            return false; // Anders is het een dichte deur of keiharde muur
+            return false;
         }
 
-        // 2. Check Binnendeuren ("innerdoor") uit Module C
         if (currentRoom.SpecialTiles.ContainsKey((x, y)) && currentRoom.SpecialTiles[(x, y)] == "innerdoor")
         {
             var pressurePlates = currentRoom.Entities.OfType<PressurePlate>().ToList();
             if (pressurePlates.Any() && !pressurePlates.All(p => p.IsPressed))
             {
-                return false; // Deur is dicht, je mag er niet doorheen
+                return false; 
             }
         }
 
@@ -178,7 +224,6 @@ public class GameController
         {
             enemy.Move();
             
-            // Check collision after enemy moves
             if (enemy.X == _level.Player.X && enemy.Y == _level.Player.Y)
             {
                 _level.Player.TakeDamage(1);
@@ -193,7 +238,6 @@ public class GameController
         
         foreach (var enemy in enemies)
         {
-            // Check if enemy is exactly 1 tile away horizontally or vertically
             int dx = Math.Abs(enemy.X - _level.Player.X);
             int dy = Math.Abs(enemy.Y - _level.Player.Y);
             
