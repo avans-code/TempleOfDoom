@@ -4,7 +4,7 @@ public class Connection
 {
     public Room TargetRoom { get; }
     public List<Doors.IDoor> Doors { get; } = new();
-    public bool IsHorizontal { get; set; } // NIEUW: Om = of | te bepalen
+    public bool IsHorizontal { get; set; }
 
     public Connection(Room targetRoom)
     {

@@ -8,5 +8,5 @@ public class ClosingGate : IDoor
 
     public bool CanEnter(Player player, Room currentRoom) => IsOpen;
     public void OnEnter() { IsOpen = false; }
-    public void Unlock() { } // Doet niks
+    public void Unlock() { } 
 }

@@ -96,7 +96,6 @@ public class LevelFactory
                 }
             }
 
-            // HIER IS ISHORIZONTAL TOEGEVOEGD AAN ALLE CONNECTIES
             if (connDto.NORTH.HasValue && connDto.SOUTH.HasValue)
             {
                 var roomN = level.Rooms[connDto.NORTH.Value];

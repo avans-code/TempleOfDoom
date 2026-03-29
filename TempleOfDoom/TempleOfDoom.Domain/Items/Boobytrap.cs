@@ -6,7 +6,7 @@ public class Boobytrap(int x, int y, int damage, bool isDisappearing) : Item(x, 
 {
     public int Damage { get; } = damage;
     public bool IsDisappearing { get; } = isDisappearing;
-    public bool HasTriggered { get; set; } = false;
+    public bool HasTriggered { get; set; }
 
     public override void Interact(Player player, Room room)
     {

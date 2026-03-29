@@ -25,7 +25,7 @@ public class Room
         // Check 1: Is het de buitenrand?
         if (x == 0 || y == 0 || x == Width - 1 || y == Height - 1) return true;
         
-        // Check 2: Is het een binnenmuur uit Module C?
+        // Check 2. Is het een binnenmuur uit Module C?
         if (SpecialTiles.TryGetValue((x, y), out string tileType) && tileType == "wall") return true;
 
         return false;

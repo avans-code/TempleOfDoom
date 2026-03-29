@@ -1,6 +1,5 @@
 using TempleOfDoom.Domain.Models;
 using TempleOfDoom.Domain.Items;
-using TempleOfDoom.Domain.Doors;
 
 namespace TempleOfDoom.Domain.Controllers;
 
@@ -123,7 +122,6 @@ public class GameController
             return false;
         }
 
-        // NIEUW: Geen rare checks meer. Pak de connectie en vraag of de deur open is!
         if (currentRoom.SpecialTiles.TryGetValue((x, y), out string tileType) && tileType == "innerdoor")
         {
             if (currentRoom.OutgoingConnections.TryGetValue("INNER", out var connection))

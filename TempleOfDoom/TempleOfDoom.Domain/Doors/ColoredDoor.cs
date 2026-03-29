@@ -16,5 +16,5 @@ public class ColoredDoor(string color) : IDoor
     }
 
     public void OnEnter() { }
-    public void Unlock() { } // Doet niks
+    public void Unlock() { } 
 }

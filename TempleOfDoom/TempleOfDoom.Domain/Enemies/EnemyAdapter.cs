@@ -28,7 +28,6 @@ public class EnemyAdapter : Entity
     {
         _localLives -= damage; 
     }
-
-    // public int Lives => _localLives;
+    
     public bool IsDead => _localLives <= 0;
 }

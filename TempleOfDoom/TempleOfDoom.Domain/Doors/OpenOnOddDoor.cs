@@ -19,5 +19,5 @@ public class OpenOnOddDoor : IDoor
     }
 
     public void OnEnter() { }
-    public void Unlock() { } // Doet niks (tenzij je deze als échte decorator maakt met _innerDoor.Unlock(), maar voor nu is leeg prima om de errors te fixen)
+    public void Unlock() { } 
 }

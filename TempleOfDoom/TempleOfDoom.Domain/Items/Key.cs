@@ -9,6 +9,6 @@ public class Key(int x, int y, string color) : Item(x, y)
     public override void Interact(Player player, Room room)
     {
         player.AddKey(Color);
-        room.Entities.Remove(this); // Verwijder sleutel uit de kamer
+        room.Entities.Remove(this); // Verijder sleutel
     }
 }

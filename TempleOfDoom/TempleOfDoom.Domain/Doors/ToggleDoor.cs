@@ -21,5 +21,5 @@ public class ToggleDoor : IDoor
     }
 
     public void OnEnter() { }
-    public void Unlock() { } // Doet niks
+    public void Unlock() { } 
 }

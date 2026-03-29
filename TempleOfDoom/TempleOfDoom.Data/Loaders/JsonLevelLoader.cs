@@ -7,7 +7,6 @@ public class JsonLevelLoader
 {
     public LevelDTO LoadLevel(string fileName)
     {
-        // Het pad is relatief aan de 'bin' map waar je app draait
         string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Levels", fileName);
         
         if (!File.Exists(fullPath))

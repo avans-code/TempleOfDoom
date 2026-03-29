@@ -24,6 +24,6 @@ public class PressurePlate(int x, int y) : Item(x, y)
 
     public override void Interact(Player player, Room room)
     {
-        IsPressed = true; // Voor de legacy Toggle doors uit Module A
+        IsPressed = true;
     }
 }

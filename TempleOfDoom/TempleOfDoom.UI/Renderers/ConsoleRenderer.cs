@@ -2,8 +2,6 @@
 using TempleOfDoom.Domain.Items;
 using TempleOfDoom.Domain.Enemies;
 using TempleOfDoom.Domain.Doors;
-using System;
-using System.Linq;
 
 namespace TempleOfDoom.UI.Renderers;
 
