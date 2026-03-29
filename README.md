@@ -1,6 +1,6 @@
 # TempleOfDoom
 
-mermaid```
+```mermaid
 classDiagram
     %% Factory Pattern
     class LevelFactory {
