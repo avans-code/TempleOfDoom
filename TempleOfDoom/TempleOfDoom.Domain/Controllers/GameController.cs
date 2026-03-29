@@ -13,10 +13,34 @@ public class GameController
     public GameController(Level level)
     {
         _level = level;
+        WireObservers();
     }
 
     public Level CurrentLevel => _level;
     public bool IsGameOver => _level.Player.Lives <= 0 || _level.Player.StonesCollected >= 5;
+
+    private void WireObservers()
+    {
+        foreach (var room in _level.Rooms.Values)
+        {
+            var plates = room.Entities.OfType<PressurePlate>().ToList();
+            if (plates.Count == 0) continue;
+
+            foreach (var plate in plates)
+            {
+                plate.OnOccupancyChanged += () =>
+                {
+                    if (plates.All(p => p.IsOccupied))
+                    {
+                        foreach (var connection in room.OutgoingConnections.Values)
+                        {
+                            UnlockSwitchDoorsRecursive(connection.Doors);
+                        }
+                    }
+                };
+            }
+        }
+    }
 
     public void HandleInput(ConsoleKey key)
     {
@@ -34,7 +58,7 @@ public class GameController
             case ConsoleKey.Spacebar:
                 Shoot();
                 MoveEnemies();
-                CheckSwitchDoors();
+                UpdatePlates();
                 return; 
         }
         
@@ -44,7 +68,7 @@ public class GameController
         {
             TryTransitionRoom(direction, targetX, targetY);
             MoveEnemies();
-            CheckSwitchDoors();
+            UpdatePlates();
             return;
         }
 
@@ -61,32 +85,17 @@ public class GameController
         }
 
         MoveEnemies();
-        
-        // Snapshot van de kamer na alle bewegingen voor de simultane puzzel
-        CheckSwitchDoors();
+        UpdatePlates();
     }
 
-    private void CheckSwitchDoors()
+    private void UpdatePlates()
     {
         Room currentRoom = _level.CurrentRoom;
-        var plates = currentRoom.Entities.OfType<PressurePlate>().ToList();
-
-        if (plates.Count > 0)
+        
+        foreach (var plate in currentRoom.Entities.OfType<PressurePlate>())
         {
-            // Check of op ELKE plate in deze kamer exact NU iemand staat (Speler of Vijand)
-            bool allPlatesOccupied = plates.All(p => 
-                (_level.Player.X == p.X && _level.Player.Y == p.Y) || 
-                currentRoom.Entities.OfType<EnemyAdapter>().Any(e => e.X == p.X && e.Y == p.Y)
-            );
-
-            if (allPlatesOccupied)
-            {
-                // Ontgrendel permanent alle SwitchDoors in de connecties
-                foreach (var connection in currentRoom.OutgoingConnections.Values)
-                {
-                    UnlockSwitchDoorsRecursive(connection.Doors);
-                }
-            }
+            plate.IsOccupied = (_level.Player.X == plate.X && _level.Player.Y == plate.Y) || 
+                               currentRoom.Entities.OfType<EnemyAdapter>().Any(e => e.X == plate.X && e.Y == plate.Y);
         }
     }
 
@@ -100,16 +109,12 @@ public class GameController
             }
             else
             {
-                // Zoek via reflection in decorators (zoals OpenOnOddDoor) naar een verstopte SwitchDoor
                 var innerDoorProp = door.GetType().GetProperty("InnerDoor") ?? 
                                     door.GetType().GetProperty("_innerDoor", BindingFlags.NonPublic | BindingFlags.Instance);
                 
-                if (innerDoorProp != null)
+                if (innerDoorProp != null && innerDoorProp.GetValue(door) is IDoor innerDoor)
                 {
-                    if (innerDoorProp.GetValue(door) is IDoor innerDoor)
-                    {
-                        UnlockSwitchDoorsRecursive(new[] { innerDoor });
-                    }
+                    UnlockSwitchDoorsRecursive(new[] { innerDoor });
                 }
             }
         }
