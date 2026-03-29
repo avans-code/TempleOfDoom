@@ -5,7 +5,6 @@ namespace TempleOfDoom.Data.Factories;
 
 public class LevelFactory
 {
-    // Converts the DTO into actual Domain objects
     public Level CreateLevel(LevelDTO dto)
     {
         Level level = new Level();
@@ -17,7 +16,6 @@ public class LevelFactory
         {
             Room room = new Room(roomDto.id, roomDto.width, roomDto.height);
 
-            // Add inner walls and inner doors for Module C
             if (roomDto.specialFloorTiles != null)
             {
                 foreach (var tile in roomDto.specialFloorTiles)
@@ -26,7 +24,6 @@ public class LevelFactory
                 }
             }
 
-            // Parse enemies using the EnemyAdapter
             if (roomDto.enemies != null)
             {
                 foreach (var enemyDto in roomDto.enemies)
@@ -43,7 +40,6 @@ public class LevelFactory
                 }
             }
 
-            // Parse items (keys, sankara stones, boobytraps, pressure plates)
             if (roomDto.items != null)
             {
                 foreach (var itemDto in roomDto.items)
@@ -71,7 +67,6 @@ public class LevelFactory
             level.Rooms.Add(room.Id, room);
         }
 
-        // Process connections AFTER all rooms are created
         foreach (var connDto in dto.connections)
         {
             List<Domain.Doors.IDoor> parsedDoors = new();
@@ -95,23 +90,23 @@ public class LevelFactory
                             parsedDoors.Add(new Domain.Doors.SwitchDoor()); 
                             break;
                         case "open on odd": 
-                            parsedDoors.Add(new Domain.Doors.OpenOnOddDoor(level)); 
+                            parsedDoors.Add(new Domain.Doors.OpenOnOddDoor(level)); // Geef voorlopig alleen level mee zoals in jouw oude code
                             break;
                     }
                 }
             }
 
-            // Handle regular room-to-room connections
+            // HIER IS ISHORIZONTAL TOEGEVOEGD AAN ALLE CONNECTIES
             if (connDto.NORTH.HasValue && connDto.SOUTH.HasValue)
             {
                 var roomN = level.Rooms[connDto.NORTH.Value];
                 var roomS = level.Rooms[connDto.SOUTH.Value];
 
-                var connToS = new Connection(roomS);
+                var connToS = new Connection(roomS) { IsHorizontal = connDto.horizontal };
                 connToS.Doors.AddRange(parsedDoors);
                 roomN.OutgoingConnections.Add("SOUTH", connToS);
 
-                var connToN = new Connection(roomN);
+                var connToN = new Connection(roomN) { IsHorizontal = connDto.horizontal };
                 connToN.Doors.AddRange(parsedDoors);
                 roomS.OutgoingConnections.Add("NORTH", connToN);
             }
@@ -121,27 +116,20 @@ public class LevelFactory
                 var roomW = level.Rooms[connDto.WEST.Value];
                 var roomE = level.Rooms[connDto.EAST.Value];
 
-                var connToE = new Connection(roomE);
+                var connToE = new Connection(roomE) { IsHorizontal = connDto.horizontal };
                 connToE.Doors.AddRange(parsedDoors);
                 roomW.OutgoingConnections.Add("EAST", connToE);
 
-                var connToW = new Connection(roomW);
+                var connToW = new Connection(roomW) { IsHorizontal = connDto.horizontal };
                 connToW.Doors.AddRange(parsedDoors);
                 roomE.OutgoingConnections.Add("WEST", connToW);
             }
 
-            // Handle "within" room connections (inner doors like in room 4)
             if (connDto.within.HasValue)
             {
                 var room = level.Rooms[connDto.within.Value];
-                
-                // For inner doors, we need to create a special connection
-                // This represents the inner door in room 4 (position x=9, y=2)
-                // The doors array contains the requirements to open this inner door
-                var innerConnection = new Connection(room); // Points to same room
+                var innerConnection = new Connection(room) { IsHorizontal = connDto.horizontal }; 
                 innerConnection.Doors.AddRange(parsedDoors);
-                
-                // Store this as a special connection that can be checked when moving through inner doors
                 room.OutgoingConnections.Add("INNER", innerConnection);
             }
         }

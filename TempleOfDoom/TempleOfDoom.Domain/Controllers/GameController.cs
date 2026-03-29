@@ -34,7 +34,7 @@ public class GameController
                         {
                             foreach (var door in connection.Doors)
                             {
-                                door.Unlock(); // Polymorfisme lost Inappropriate Intimacy op
+                                door.Unlock(); 
                             }
                         }
                     }
@@ -87,7 +87,6 @@ public class GameController
 
     private void ProcessRoomEvents()
     {
-        // De controller stuurt puur aan (Delegatie), de Room doet het werk (Information Expert)
         _level.CurrentRoom.MoveEnemies();
         _level.CurrentRoom.ResolveCollisions(_level.Player);
         _level.CurrentRoom.UpdatePressurePlates(_level.Player);
@@ -103,8 +102,6 @@ public class GameController
             {
                 connection.OnEnter();
                 _level.CurrentRoomId = connection.TargetRoom.Id;
-                
-                // De Room zelf weet hoe groot hij is en waar de deur zit! (Geen Magic Numbers in de Controller)
                 connection.TargetRoom.PlacePlayerAtEntrance(_level.Player, direction);
             }
         }
@@ -126,13 +123,14 @@ public class GameController
             return false;
         }
 
+        // NIEUW: Geen rare checks meer. Pak de connectie en vraag of de deur open is!
         if (currentRoom.SpecialTiles.TryGetValue((x, y), out string tileType) && tileType == "innerdoor")
         {
-            var pressurePlates = currentRoom.Entities.OfType<PressurePlate>().ToList();
-            if (pressurePlates.Any() && !pressurePlates.All(p => p.IsPressed))
+            if (currentRoom.OutgoingConnections.TryGetValue("INNER", out var connection))
             {
-                return false; 
+                return connection.CanEnter(_level.Player, currentRoom);
             }
+            return false; 
         }
 
         return true;

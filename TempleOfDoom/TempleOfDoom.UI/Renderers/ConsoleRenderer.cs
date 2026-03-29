@@ -2,6 +2,8 @@
 using TempleOfDoom.Domain.Items;
 using TempleOfDoom.Domain.Enemies;
 using TempleOfDoom.Domain.Doors;
+using System;
+using System.Linq;
 
 namespace TempleOfDoom.UI.Renderers;
 
@@ -40,7 +42,6 @@ public class ConsoleRenderer
                 }
                 else
                 {
-                    // Two spaces for empty floor to maintain grid aspect ratio
                     Console.Write("  ");
                 }
             }
@@ -55,78 +56,36 @@ public class ConsoleRenderer
 
     private bool TryDrawDoor(Room room, int x, int y, Level level)
     {
-        bool isDoor = false;
-        char doorChar = ' '; // Default to space for open doors
+        Connection? conn = null;
+        bool isInnerDoor = room.SpecialTiles.TryGetValue((x, y), out string tileType) && tileType == "innerdoor";
+
+        if (room.IsEdgeDoor(x, y, out string direction))
+        {
+            conn = room.OutgoingConnections.GetValueOrDefault(direction);
+        }
+        else if (isInnerDoor)
+        {
+            conn = room.OutgoingConnections.GetValueOrDefault("INNER");
+        }
+
+        if (conn == null) return false;
+
+        if (conn.CanEnter(level.Player, room))
+        {
+            DrawChar(' ', ConsoleColor.White);
+            return true;
+        }
+
+        char doorChar = conn.IsHorizontal ? '=' : '|';
         ConsoleColor doorColor = ConsoleColor.White;
 
-        if (y == 0 && x == room.Width / 2 && room.OutgoingConnections.ContainsKey("NORTH"))
+        if (conn.Doors.OfType<ClosingGate>().Any()) doorChar = 'n';
+        if (conn.Doors.OfType<ToggleDoor>().Any() || conn.Doors.OfType<SwitchDoor>().Any()) doorChar = '┴';
+
+        var coloredDoor = conn.Doors.OfType<ColoredDoor>().FirstOrDefault();
+        if (coloredDoor != null)
         {
-            isDoor = true;
-        }
-        else if (y == room.Height - 1 && x == room.Width / 2 && room.OutgoingConnections.ContainsKey("SOUTH"))
-        {
-            isDoor = true;
-        }
-        else if (x == 0 && y == room.Height / 2 && room.OutgoingConnections.ContainsKey("WEST"))
-        {
-            isDoor = true;
-        }
-        else if (x == room.Width - 1 && y == room.Height / 2 && room.OutgoingConnections.ContainsKey("EAST"))
-        {
-            isDoor = true;
-        }
-
-        if (room.SpecialTiles.ContainsKey((x, y)) && room.SpecialTiles[(x, y)] == "innerdoor")
-        {
-            isDoor = true;
-        }
-
-        if (!isDoor) return false;
-
-        Connection? conn = null;
-        if (y == 0) conn = room.OutgoingConnections.GetValueOrDefault("NORTH");
-        else if (y == room.Height - 1) conn = room.OutgoingConnections.GetValueOrDefault("SOUTH");
-        else if (x == 0) conn = room.OutgoingConnections.GetValueOrDefault("WEST");
-        else if (x == room.Width - 1) conn = room.OutgoingConnections.GetValueOrDefault("EAST");
-
-        // Check if connection can be entered (door is open)
-        bool canEnter = conn?.CanEnter(level.Player, room) ?? false;
-
-        if (!canEnter)
-        {
-            // Door is closed, show appropriate symbol
-            var doorType = conn?.Doors.FirstOrDefault();
-
-            switch (doorType)
-            {
-                case ColoredDoor coloredDoor:
-                    doorChar = '=';
-                    doorColor = GetConsoleColor(coloredDoor.Color);
-                    break;
-                case ClosingGate:
-                    doorChar = 'n';
-                    break;
-                default:
-                    doorChar = '┴';
-                    break;
-            }
-        }
-        // If canEnter is true, doorChar remains ' ' (space)
-
-        // Handle inner doors specifically
-        if (room.SpecialTiles.ContainsKey((x, y)) && room.SpecialTiles[(x, y)] == "innerdoor")
-        {
-            var plates = room.Entities.OfType<PressurePlate>().ToList();
-            if (plates.Any() && !plates.All(p => p.IsPressed))
-            {
-                doorChar = '┴'; // Closed inner door
-            }
-            else
-            {
-                doorChar = ' '; // Open inner door
-            }
-
-            doorColor = ConsoleColor.White;
+            doorColor = GetConsoleColor(coloredDoor.Color);
         }
 
         DrawChar(doorChar, doorColor);
@@ -164,7 +123,6 @@ public class ConsoleRenderer
         Console.Write(c);
         Console.ResetColor();
 
-        // Added space for aspect ratio correction
         Console.Write(" ");
     }
 
