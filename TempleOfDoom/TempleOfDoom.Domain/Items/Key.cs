@@ -1,11 +1,14 @@
+using TempleOfDoom.Domain.Models;
+
 namespace TempleOfDoom.Domain.Items;
 
-public class Key : Item
+public class Key(int x, int y, string color) : Item(x, y)
 {
-    public string Color { get; }
+    public string Color { get; } = color;
 
-    public Key(int x, int y, string color) : base(x, y)
+    public override void Interact(Player player, Room room)
     {
-        Color = color;
+        player.AddKey(Color);
+        room.Entities.Remove(this); // Verwijder sleutel uit de kamer
     }
 }

@@ -191,33 +191,8 @@ public class GameController
         Room currentRoom = _level.CurrentRoom;
         var itemOnFloor = currentRoom.Entities.OfType<Item>()
             .FirstOrDefault(i => i.X == _level.Player.X && i.Y == _level.Player.Y);
-
-        if (itemOnFloor != null)
-        {
-            if (itemOnFloor is SankaraStone)
-            {
-                _level.Player.StonesCollected++;
-                currentRoom.Entities.Remove(itemOnFloor);
-            }
-            else if (itemOnFloor is Key key)
-            {
-                _level.Player.AddKey(key.Color);
-                currentRoom.Entities.Remove(itemOnFloor);
-            }
-            else if (itemOnFloor is Boobytrap trap && !trap.HasTriggered)
-            {
-                _level.Player.TakeDamage(trap.Damage);
-                trap.HasTriggered = true;
-                if (trap.IsDisappearing)
-                {
-                    currentRoom.Entities.Remove(itemOnFloor);
-                }
-            }
-            else if (itemOnFloor is PressurePlate plate)
-            {
-                plate.IsPressed = true;
-            }
-        }
+        
+        itemOnFloor?.Interact(_level.Player, currentRoom);
     }
 
     private void MoveEnemies()

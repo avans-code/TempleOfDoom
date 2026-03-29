@@ -1,12 +1,10 @@
-using System;
 using TempleOfDoom.Domain.Models;
 
 namespace TempleOfDoom.Domain.Items;
 
-public class PressurePlate : Item
+public class PressurePlate(int x, int y) : Item(x, y)
 {
     private bool _isOccupied;
-
     public event Action? OnOccupancyChanged;
 
     public bool IsOccupied
@@ -22,9 +20,10 @@ public class PressurePlate : Item
         }
     }
 
-    public bool IsPressed { get; set; } = false;
+    public bool IsPressed { get; set; }
 
-    public PressurePlate(int x, int y) : base(x, y)
+    public override void Interact(Player player, Room room)
     {
+        IsPressed = true; // Voor de legacy Toggle doors uit Module A
     }
 }
