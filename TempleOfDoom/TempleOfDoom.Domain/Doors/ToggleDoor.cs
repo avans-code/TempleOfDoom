@@ -10,7 +10,6 @@ public class ToggleDoor : IDoor
     public bool CanEnter(Player player, Room currentRoom)
     {
         if (IsOpen) return true;
-
         var plates = currentRoom.Entities.OfType<PressurePlate>().ToList();
 
         if (!plates.Any() || plates.All(p => p.IsPressed))
@@ -18,9 +17,9 @@ public class ToggleDoor : IDoor
             IsOpen = true;
             return true;
         }
-
         return false;
     }
 
     public void OnEnter() { }
+    public void Unlock() { } // Doet niks
 }

@@ -15,8 +15,9 @@ public class OpenOnOddDoor : IDoor
 
     public bool CanEnter(Player player, Room room)
     {
-        return player.Lives % 2 != 0; // Alleen open bij oneven aantal levens
+        return player.Lives % 2 != 0; 
     }
 
     public void OnEnter() { }
+    public void Unlock() { } // Doet niks (tenzij je deze als échte decorator maakt met _innerDoor.Unlock(), maar voor nu is leeg prima om de errors te fixen)
 }

@@ -1,8 +1,6 @@
-using System.Reflection;
 using TempleOfDoom.Domain.Models;
 using TempleOfDoom.Domain.Enemies;
 using TempleOfDoom.Domain.Items;
-using TempleOfDoom.Domain.Doors;
 
 namespace TempleOfDoom.Domain.Controllers;
 
@@ -32,9 +30,14 @@ public class GameController
                 {
                     if (plates.All(p => p.IsOccupied))
                     {
+                        // Geen Inappropriate Intimacy (Reflection) meer!
+                        // Door Polymorfisme luistert alleen de SwitchDoor hiernaar.
                         foreach (var connection in room.OutgoingConnections.Values)
                         {
-                            UnlockSwitchDoorsRecursive(connection.Doors);
+                            foreach (var door in connection.Doors)
+                            {
+                                door.Unlock(); 
+                            }
                         }
                     }
                 };
@@ -47,14 +50,13 @@ public class GameController
         _level.StepCount++;
         int targetX = _level.Player.X;
         int targetY = _level.Player.Y;
-        string direction = "";
 
         switch (key)
         {
-            case ConsoleKey.UpArrow: targetY--; direction = "NORTH"; break;
-            case ConsoleKey.DownArrow: targetY++; direction = "SOUTH"; break;
-            case ConsoleKey.LeftArrow: targetX--; direction = "WEST"; break;
-            case ConsoleKey.RightArrow: targetX++; direction = "EAST"; break;
+            case ConsoleKey.UpArrow: targetY--; break;
+            case ConsoleKey.DownArrow: targetY++; break;
+            case ConsoleKey.LeftArrow: targetX--; break;
+            case ConsoleKey.RightArrow: targetX++; break;
             case ConsoleKey.Spacebar:
                 Shoot();
                 MoveEnemies();
@@ -66,7 +68,7 @@ public class GameController
         
         if (targetX < 0 || targetX >= currentRoom.Width || targetY < 0 || targetY >= currentRoom.Height)
         {
-            TryTransitionRoom(direction, targetX, targetY);
+            TryTransitionRoom(targetX, targetY);
             MoveEnemies();
             UpdatePlates();
             return;
@@ -99,43 +101,17 @@ public class GameController
         }
     }
 
-    private void UnlockSwitchDoorsRecursive(IEnumerable<IDoor> doors)
-    {
-        foreach (var door in doors)
-        {
-            if (door is SwitchDoor sd)
-            {
-                sd.Unlock();
-            }
-            else
-            {
-                var innerDoorProp = door.GetType().GetProperty("InnerDoor") ?? 
-                                    door.GetType().GetProperty("_innerDoor", BindingFlags.NonPublic | BindingFlags.Instance);
-                
-                if (innerDoorProp != null && innerDoorProp.GetValue(door) is IDoor innerDoor)
-                {
-                    UnlockSwitchDoorsRecursive(new[] { innerDoor });
-                }
-            }
-        }
-    }
-
-    private void TryTransitionRoom(string direction, int targetX, int targetY)
+    private void TryTransitionRoom(int targetX, int targetY)
     {
         Room currentRoom = _level.CurrentRoom;
         
-        bool isAtDoor = false;
-        if (direction == "NORTH" && targetX == currentRoom.Width / 2 && targetY < 0) isAtDoor = true;
-        if (direction == "SOUTH" && targetX == currentRoom.Width / 2 && targetY >= currentRoom.Height) isAtDoor = true;
-        if (direction == "WEST" && targetX < 0 && targetY == currentRoom.Height / 2) isAtDoor = true;
-        if (direction == "EAST" && targetX >= currentRoom.Width && targetY == currentRoom.Height / 2) isAtDoor = true;
+        // Geen Complex Conditionals meer!
+        string direction = currentRoom.GetExitDirection(targetX, targetY);
+        
+        if (string.IsNullOrEmpty(direction)) return;
 
-        if (!isAtDoor) return;
-
-        if (currentRoom.OutgoingConnections.ContainsKey(direction))
+        if (currentRoom.OutgoingConnections.TryGetValue(direction, out var connection))
         {
-            var connection = currentRoom.OutgoingConnections[direction];
-            
             if (connection.CanEnter(_level.Player, currentRoom))
             {
                 connection.OnEnter();
@@ -155,26 +131,18 @@ public class GameController
 
         if (currentRoom.IsWall(x, y))
         {
-            bool isEdgeDoor = false;
-            string dir = "";
-
-            if (y == 0 && x == currentRoom.Width / 2) { isEdgeDoor = true; dir = "NORTH"; }
-            else if (y == currentRoom.Height - 1 && x == currentRoom.Width / 2) { isEdgeDoor = true; dir = "SOUTH"; }
-            else if (x == 0 && y == currentRoom.Height / 2) { isEdgeDoor = true; dir = "WEST"; }
-            else if (x == currentRoom.Width - 1 && y == currentRoom.Height / 2) { isEdgeDoor = true; dir = "EAST"; }
-
-            if (isEdgeDoor && currentRoom.OutgoingConnections.ContainsKey(dir))
+            // Geen Complex Conditionals en Deeply Nested Code meer!
+            if (currentRoom.IsEdgeDoor(x, y, out string dir))
             {
-                var connection = currentRoom.OutgoingConnections[dir];
-                if (connection.CanEnter(_level.Player, currentRoom))
+                if (currentRoom.OutgoingConnections.TryGetValue(dir, out var connection))
                 {
-                    return true;
+                    return connection.CanEnter(_level.Player, currentRoom);
                 }
             }
             return false;
         }
 
-        if (currentRoom.SpecialTiles.ContainsKey((x, y)) && currentRoom.SpecialTiles[(x, y)] == "innerdoor")
+        if (currentRoom.SpecialTiles.TryGetValue((x, y), out string tileType) && tileType == "innerdoor")
         {
             var pressurePlates = currentRoom.Entities.OfType<PressurePlate>().ToList();
             if (pressurePlates.Any() && !pressurePlates.All(p => p.IsPressed))

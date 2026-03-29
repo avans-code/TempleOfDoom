@@ -8,13 +8,9 @@ public class SwitchDoor : IDoor
 
     public void Unlock()
     {
-        IsOpen = true;
+        IsOpen = true; 
     }
 
-    public bool CanEnter(Player player, Room currentRoom)
-    {
-        return IsOpen;
-    }
-
+    public bool CanEnter(Player player, Room currentRoom) => IsOpen;
     public void OnEnter() { }
 }

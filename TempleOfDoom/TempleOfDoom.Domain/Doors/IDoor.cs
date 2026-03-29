@@ -6,4 +6,5 @@ public interface IDoor
 {
     bool CanEnter(Player player, Room currentRoom);
     void OnEnter();
+    void Unlock(); // Toegevoegd voor Polymorfisme
 }
