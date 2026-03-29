@@ -1,6 +1,5 @@
 # TempleOfDoom
 
-mermaid`
 classDiagram
     %% Factory Pattern
     class LevelFactory {
@@ -9,13 +8,13 @@ classDiagram
     
     %% Strategy Pattern
     class ILevelLoader {
-        &lt;&lt;interface&gt;&gt;
+        <<interface>>
         +Load(path: string): LevelDTO
     }
     class JsonLevelLoader {
         +Load(path: string): LevelDTO
     }
-    ILevelLoader &lt;|.. JsonLevelLoader
+    ILevelLoader <|.. JsonLevelLoader
     
     %% Domain Models
     class Level {
@@ -53,7 +52,7 @@ classDiagram
     }
     
     class Entity {
-        &lt;&lt;abstract&gt;&gt;
+        <<abstract>>
         +X: int
         +Y: int
     }
@@ -67,9 +66,9 @@ classDiagram
         +TakeDamage(amount: int)
     }
     
-    %% Items &amp; Observer Pattern
+    %% Items & Observer Pattern
     class Item {
-        &lt;&lt;abstract&gt;&gt;
+        <<abstract>>
         +Interact(player: Player, room: Room)*
     }
     
@@ -97,9 +96,9 @@ classDiagram
         +Interact(player: Player, room: Room)
     }
     
-    %% Doors &amp; Decorator Pattern
+    %% Doors & Decorator Pattern
     class IDoor {
-        &lt;&lt;interface&gt;&gt;
+        <<interface>>
         +CanEnter(player: Player, currentRoom: Room): bool
         +OnEnter()
         +Unlock()
@@ -172,34 +171,33 @@ classDiagram
     }
     
     %% Relationships
-    Level &quot;1&quot; *-- &quot;many&quot; Room : Rooms
-    Level &quot;1&quot; *-- &quot;1&quot; Player : Player
-    Room &quot;1&quot; *-- &quot;many&quot; Entity : Entities
-    Room &quot;1&quot; *-- &quot;many&quot; Connection : OutgoingConnections
-    Connection &quot;1&quot; --&gt; &quot;1&quot; Room : TargetRoom
-    Connection &quot;1&quot; *-- &quot;many&quot; IDoor : Doors
+    Level "1" *-- "many" Room : Rooms
+    Level "1" *-- "1" Player : Player
+    Room "1" *-- "many" Entity : Entities
+    Room "1" *-- "many" Connection : OutgoingConnections
+    Connection "1" --> "1" Room : TargetRoom
+    Connection "1" *-- "many" IDoor : Doors
     
-    Entity &lt;|-- Player
-    Entity &lt;|-- Item
-    Entity &lt;|-- EnemyAdapter
+    Entity <|-- Player
+    Entity <|-- Item
+    Entity <|-- EnemyAdapter
     
-    Item &lt;|-- Boobytrap
-    Item &lt;|-- Key
-    Item &lt;|-- SankaraStone
-    Item &lt;|-- PressurePlate
+    Item <|-- Boobytrap
+    Item <|-- Key
+    Item <|-- SankaraStone
+    Item <|-- PressurePlate
     
-    IDoor &lt;|.. ClosingGate
-    IDoor &lt;|.. ColoredDoor
-    IDoor &lt;|.. SwitchDoor
-    IDoor &lt;|.. ToggleDoor
-    IDoor &lt;|.. OpenOnOddDoor
+    IDoor <|.. ClosingGate
+    IDoor <|.. ColoredDoor
+    IDoor <|.. SwitchDoor
+    IDoor <|.. ToggleDoor
+    IDoor <|.. OpenOnOddDoor
     
     %% Decorator Relation
     OpenOnOddDoor o-- IDoor : wraps
     
     GameController o-- Level
-    LevelFactory ..&gt; Level : creates
+    LevelFactory ..> Level : creates
     
     %% Observer Dependency
-    PressurePlate ..&gt; GameController : invokes event
-    `
+    PressurePlate ..> GameController : invokes event
