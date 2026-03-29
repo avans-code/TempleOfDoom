@@ -22,7 +22,7 @@ public class ConsoleRenderer
                     continue;
                 }
 
-                if (TryDrawDoor(room, x, y))
+                if (TryDrawDoor(room, x, y, level))
                 {
                     continue;
                 }
@@ -52,66 +52,76 @@ public class ConsoleRenderer
         Console.WriteLine("--------------------------------------------------");
     }
 
-    private bool TryDrawDoor(Room room, int x, int y)
-    {
-        bool isDoor = false;
-        char doorChar = '?';
-        ConsoleColor doorColor = ConsoleColor.White;
+        private bool TryDrawDoor(Room room, int x, int y, Level level)
+        {
+            bool isDoor = false;
+            char doorChar = ' '; // Default to space for open doors
+            ConsoleColor doorColor = ConsoleColor.White;
 
-        if (y == 0 && x == room.Width / 2 && room.OutgoingConnections.ContainsKey("NORTH")) { isDoor = true; doorChar = '='; }
-        else if (y == room.Height - 1 && x == room.Width / 2 && room.OutgoingConnections.ContainsKey("SOUTH")) { isDoor = true; doorChar = '='; }
-        else if (x == 0 && y == room.Height / 2 && room.OutgoingConnections.ContainsKey("WEST")) { isDoor = true; doorChar = '|'; }
-        else if (x == room.Width - 1 && y == room.Height / 2 && room.OutgoingConnections.ContainsKey("EAST")) { isDoor = true; doorChar = '|'; }
+            if (y == 0 && x == room.Width / 2 && room.OutgoingConnections.ContainsKey("NORTH")) { isDoor = true; }
+            else if (y == room.Height - 1 && x == room.Width / 2 && room.OutgoingConnections.ContainsKey("SOUTH")) { isDoor = true; }
+            else if (x == 0 && y == room.Height / 2 && room.OutgoingConnections.ContainsKey("WEST")) { isDoor = true; }
+            else if (x == room.Width - 1 && y == room.Height / 2 && room.OutgoingConnections.ContainsKey("EAST")) { isDoor = true; }
         
-        if (room.SpecialTiles.ContainsKey((x, y)) && room.SpecialTiles[(x, y)] == "innerdoor") { isDoor = true; doorChar = '='; }
+            if (room.SpecialTiles.ContainsKey((x, y)) && room.SpecialTiles[(x, y)] == "innerdoor") { isDoor = true; }
 
-        if (!isDoor) return false;
+            if (!isDoor) return false;
 
-        Connection? conn = null;
-        if (doorChar == '=' && y == 0) conn = room.OutgoingConnections.GetValueOrDefault("NORTH");
-        if (doorChar == '=' && y > 0) conn = room.OutgoingConnections.GetValueOrDefault("SOUTH");
-        if (doorChar == '|' && x == 0) conn = room.OutgoingConnections.GetValueOrDefault("WEST");
-        if (doorChar == '|' && x > 0) conn = room.OutgoingConnections.GetValueOrDefault("EAST");
+            Connection? conn = null;
+            if (y == 0) conn = room.OutgoingConnections.GetValueOrDefault("NORTH");
+            else if (y == room.Height - 1) conn = room.OutgoingConnections.GetValueOrDefault("SOUTH");
+            else if (x == 0) conn = room.OutgoingConnections.GetValueOrDefault("WEST");
+            else if (x == room.Width - 1) conn = room.OutgoingConnections.GetValueOrDefault("EAST");
 
-        var doorType = conn?.Doors.FirstOrDefault();
-
-        if (doorType is ColoredDoor coloredDoor)
-        {
-            doorColor = GetConsoleColor(coloredDoor.Color);
-        }
-        else if (doorType is ClosingGate)
-        {
-            doorChar = 'n';
-        }
-        else if (doorType is SwitchDoor switchDoor)
-        {
-            // Laat een open deur zien als een spatie, of pas het symbool aan
-            doorChar = switchDoor.IsOpen ? ' ' : '┴'; 
-        }
-        else if (doorType is ToggleDoor)
-        {
-            doorChar = '┴';
-        }
+            // Check if connection can be entered (door is open)
+            bool canEnter = conn?.CanEnter(level.Player, room) ?? false;
+            
+            if (!canEnter)
+            {
+                // Door is closed, show appropriate symbol
+                var doorType = conn?.Doors.FirstOrDefault();
+                if (doorType is ColoredDoor coloredDoor)
+                {
+                    doorChar = '=';
+                    doorColor = GetConsoleColor(coloredDoor.Color);
+                }
+                else if (doorType is ClosingGate)
+                {
+                    doorChar = 'n';
+                }
+                else if (doorType is SwitchDoor)
+                {
+                    doorChar = '┴';
+                }
+                else if (doorType is ToggleDoor)
+                {
+                    doorChar = '┴';
+                }
+                else
+                {
+                    doorChar = '┴'; // Default closed door symbol
+                }
+            }
+            // If canEnter is true, doorChar remains ' ' (space)
         
-        // Let op: ook voor binnendeuren moeten we checken of ze open zijn
-        if (room.SpecialTiles.ContainsKey((x, y)) && room.SpecialTiles[(x, y)] == "innerdoor") 
-        { 
-            var plates = room.Entities.OfType<PressurePlate>().ToList();
-            if (plates.Any() && plates.All(p => p.IsPressed))
-            {
-                doorChar = ' '; // Open binnendeur
+            // Handle inner doors specifically
+            if (room.SpecialTiles.ContainsKey((x, y)) && room.SpecialTiles[(x, y)] == "innerdoor") 
+            { 
+                var plates = room.Entities.OfType<PressurePlate>().ToList();
+                if (plates.Any() && !plates.All(p => p.IsPressed))
+                {
+                    doorChar = '┴'; // Closed inner door
+                }
+                else
+                {
+                    doorChar = ' '; // Open inner door
+                }
+                doorColor = ConsoleColor.White;
             }
-            else
-            {
-                doorChar = '┴'; // Dichte binnendeur
-            }
-            doorColor = ConsoleColor.White;
-            isDoor = true; 
-        }
 
-        DrawChar(doorChar, doorColor);
-        return true;
-    }
+            DrawChar(doorChar, doorColor);
+            return true;
+        }
 
     private void DrawEntity(Entity entity)
     {

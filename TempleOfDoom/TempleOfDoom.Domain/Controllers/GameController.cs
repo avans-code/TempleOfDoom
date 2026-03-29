@@ -37,14 +37,16 @@ public class GameController
         }
         
         Room currentRoom = _level.CurrentRoom;
-        if (targetX <= 0 || targetX >= currentRoom.Width - 1 || targetY <= 0 || targetY >= currentRoom.Height - 1)
+        
+        // Ga pas naar de volgende kamer als je VAN de deur af stapt (buiten de map)
+        if (targetX < 0 || targetX >= currentRoom.Width || targetY < 0 || targetY >= currentRoom.Height)
         {
             TryTransitionRoom(direction, targetX, targetY);
             MoveEnemies();
             return;
         }
 
-        // Check of we mogen lopen (binnen de kamer)
+        // Check of we mogen lopen (binnen de kamer of op de open deur)
         if (CanMoveTo(targetX, targetY))
         {
             _level.Player.X = targetX;
@@ -66,14 +68,14 @@ public class GameController
     {
         Room currentRoom = _level.CurrentRoom;
         
-        // Check if player is exactly at the door coordinates
+        // Check of je daadwerkelijk door de deur-opening naar buiten stapte
         bool isAtDoor = false;
-        if (direction == "NORTH" && targetX == currentRoom.Width / 2 && targetY == 0) isAtDoor = true;
-        if (direction == "SOUTH" && targetX == currentRoom.Width / 2 && targetY == currentRoom.Height - 1) isAtDoor = true;
-        if (direction == "WEST" && targetX == 0 && targetY == currentRoom.Height / 2) isAtDoor = true;
-        if (direction == "EAST" && targetX == currentRoom.Width - 1 && targetY == currentRoom.Height / 2) isAtDoor = true;
+        if (direction == "NORTH" && targetX == currentRoom.Width / 2 && targetY < 0) isAtDoor = true;
+        if (direction == "SOUTH" && targetX == currentRoom.Width / 2 && targetY >= currentRoom.Height) isAtDoor = true;
+        if (direction == "WEST" && targetX < 0 && targetY == currentRoom.Height / 2) isAtDoor = true;
+        if (direction == "EAST" && targetX >= currentRoom.Width && targetY == currentRoom.Height / 2) isAtDoor = true;
 
-        if (!isAtDoor) return; // Player hit a normal wall, not the door
+        if (!isAtDoor) return;
 
         if (currentRoom.OutgoingConnections.ContainsKey(direction))
         {
@@ -84,11 +86,11 @@ public class GameController
                 connection.OnEnter();
                 _level.CurrentRoomId = connection.TargetRoom.Id;
                 
-                // Position player at the opposite door in the new room
-                if (direction == "NORTH") { _level.Player.Y = connection.TargetRoom.Height - 2; _level.Player.X = connection.TargetRoom.Width / 2; }
-                if (direction == "SOUTH") { _level.Player.Y = 1; _level.Player.X = connection.TargetRoom.Width / 2; }
-                if (direction == "WEST") { _level.Player.X = connection.TargetRoom.Width - 2; _level.Player.Y = connection.TargetRoom.Height / 2; }
-                if (direction == "EAST") { _level.Player.X = 1; _level.Player.Y = connection.TargetRoom.Height / 2; }
+                // Positioneer speler OP de tegel van de deur in de nieuwe kamer
+                if (direction == "NORTH") { _level.Player.Y = connection.TargetRoom.Height - 1; _level.Player.X = connection.TargetRoom.Width / 2; }
+                if (direction == "SOUTH") { _level.Player.Y = 0; _level.Player.X = connection.TargetRoom.Width / 2; }
+                if (direction == "WEST") { _level.Player.X = connection.TargetRoom.Width - 1; _level.Player.Y = connection.TargetRoom.Height / 2; }
+                if (direction == "EAST") { _level.Player.X = 0; _level.Player.Y = connection.TargetRoom.Height / 2; }
             }
         }
     }
@@ -97,17 +99,33 @@ public class GameController
     {
         Room currentRoom = _level.CurrentRoom;
 
-        // 1. Check Buitenmuren en Binnenmuren ("wall")
-        if (currentRoom.IsWall(x, y)) return false;
+        // 1. Check Buitenmuren (en of we OP een buitendeur mogen staan)
+        if (currentRoom.IsWall(x, y))
+        {
+            bool isEdgeDoor = false;
+            string dir = "";
+
+            if (y == 0 && x == currentRoom.Width / 2) { isEdgeDoor = true; dir = "NORTH"; }
+            else if (y == currentRoom.Height - 1 && x == currentRoom.Width / 2) { isEdgeDoor = true; dir = "SOUTH"; }
+            else if (x == 0 && y == currentRoom.Height / 2) { isEdgeDoor = true; dir = "WEST"; }
+            else if (x == currentRoom.Width - 1 && y == currentRoom.Height / 2) { isEdgeDoor = true; dir = "EAST"; }
+
+            // Als het een buitendeur is, mag je er op staan MITS de deur open is
+            if (isEdgeDoor && currentRoom.OutgoingConnections.ContainsKey(dir))
+            {
+                var connection = currentRoom.OutgoingConnections[dir];
+                if (connection.CanEnter(_level.Player, currentRoom))
+                {
+                    return true;
+                }
+            }
+            return false; // Anders is het een dichte deur of keiharde muur
+        }
 
         // 2. Check Binnendeuren ("innerdoor") uit Module C
         if (currentRoom.SpecialTiles.ContainsKey((x, y)) && currentRoom.SpecialTiles[(x, y)] == "innerdoor")
         {
-            // Zoals in de PDF staat, gaat een innerdoor (SwitchDoor) open als de pressure plates in DEZELFDE ruimte ingedrukt zijn
             var pressurePlates = currentRoom.Entities.OfType<PressurePlate>().ToList();
-            
-            // Als er pressure plates zijn, moeten ze ALLEMAAL ingedrukt zijn. 
-            // Zijn er geen, dan is de deur standaard open (of gedraagt zich als normale vloer)
             if (pressurePlates.Any() && !pressurePlates.All(p => p.IsPressed))
             {
                 return false; // Deur is dicht, je mag er niet doorheen

@@ -71,6 +71,7 @@ public class LevelFactory
             level.Rooms.Add(room.Id, room);
         }
 
+        // Process connections AFTER all rooms are created
         foreach (var connDto in dto.connections)
         {
             List<TempleOfDoom.Domain.Doors.IDoor> parsedDoors = new();
@@ -81,14 +82,26 @@ public class LevelFactory
                 {
                     switch (doorDto.type.ToLower())
                     {
-                        case "colored": parsedDoors.Add(new TempleOfDoom.Domain.Doors.ColoredDoor(doorDto.color ?? "")); break;
-                        case "toggle": parsedDoors.Add(new TempleOfDoom.Domain.Doors.ToggleDoor()); break;
-                        case "closing gate": parsedDoors.Add(new TempleOfDoom.Domain.Doors.ClosingGate()); break;
-                        case "switched": parsedDoors.Add(new TempleOfDoom.Domain.Doors.SwitchDoor()); break;
+                        case "colored": 
+                            parsedDoors.Add(new TempleOfDoom.Domain.Doors.ColoredDoor(doorDto.color ?? "")); 
+                            break;
+                        case "toggle": 
+                            parsedDoors.Add(new TempleOfDoom.Domain.Doors.ToggleDoor()); 
+                            break;
+                        case "closing gate": 
+                            parsedDoors.Add(new TempleOfDoom.Domain.Doors.ClosingGate()); 
+                            break;
+                        case "switched": 
+                            parsedDoors.Add(new TempleOfDoom.Domain.Doors.SwitchDoor()); 
+                            break;
+                        case "open on odd": 
+                            parsedDoors.Add(new TempleOfDoom.Domain.Doors.OpenOnOddDoor(level)); 
+                            break;
                     }
                 }
             }
 
+            // Handle regular room-to-room connections
             if (connDto.NORTH.HasValue && connDto.SOUTH.HasValue)
             {
                 var roomN = level.Rooms[connDto.NORTH.Value];
@@ -115,6 +128,21 @@ public class LevelFactory
                 var connToW = new TempleOfDoom.Domain.Models.Connection(roomW);
                 connToW.Doors.AddRange(parsedDoors);
                 roomE.OutgoingConnections.Add("WEST", connToW);
+            }
+
+            // Handle "within" room connections (inner doors like in room 4)
+            if (connDto.within.HasValue)
+            {
+                var room = level.Rooms[connDto.within.Value];
+                
+                // For inner doors, we need to create a special connection
+                // This represents the inner door in room 4 (position x=9, y=2)
+                // The doors array contains the requirements to open this inner door
+                var innerConnection = new TempleOfDoom.Domain.Models.Connection(room); // Points to same room
+                innerConnection.Doors.AddRange(parsedDoors);
+                
+                // Store this as a special connection that can be checked when moving through inner doors
+                room.OutgoingConnections.Add("INNER", innerConnection);
             }
         }
         
