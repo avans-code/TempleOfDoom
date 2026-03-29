@@ -2,120 +2,111 @@
 <html lang="nl">
 <head>
     <meta charset="utf-8">
-    <title>Temple of Doom | Assessment Deck</title>
+    <title>Temple of Doom | Professional Assessment</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/tokyo-night-dark.min.css">
     
     <style>
         :root {
-            /* Smooth, Continuous Animated Gradient Background */
             --bg-gradient: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #0f0c29);
-            --accent-glow: 0 0 20px rgba(139, 92, 246, 0.5);
-            --glass-bg: rgba(255, 255, 255, 0.05);
+            --accent-purple: #bd93f9;
+            --accent-glow: 0 0 30px rgba(189, 147, 249, 0.4);
+            --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
-            
-            /* Rider/VS Dark Gray */
-            --ide-window-bg: #1a1b26; /* Integrated with Tokyo Night Dark background */
+            --ide-bg: #1a1b26;
         }
+
+        body { background: #000; }
 
         .reveal {
             font-family: 'Inter', sans-serif;
             background: var(--bg-gradient);
             background-size: 400% 400%;
-            animation: gradientAnimation 15s ease infinite;
-            color: #fff;
+            animation: gradientBG 15s ease infinite;
         }
 
-        @keyframes gradientAnimation {
+        @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* Modern Glassmorphism Card Style */
+        .highlight { color: var(--accent-purple); text-shadow: var(--accent-glow); }
+
+        /* Glassmorphism Containers */
         .glass-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            display: inline-block;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
-        h1, h2, h3 {
-            text-transform: none !important;
-            font-weight: 800 !important;
-            letter-spacing: -1px !important;
-        }
-
-        .highlight { color: #bd93f9; text-shadow: var(--accent-glow); }
-        
-        /* Modern Integrated IDE Window Style (Rider/VS) */
-        .rider-window {
-            background: var(--ide-window-bg);
+        /* Perfected IDE Window */
+        .ide-window {
+            background: var(--ide-bg);
             border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
             border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            position: relative;
-            backdrop-filter: blur(12px); /* Maintain glass effect on integrated window */
             width: 100%;
-            margin-top: 30px !important;
+            max-width: 1000px;
+            margin: 20px auto !important;
+            text-align: left;
         }
 
-        .code-header {
-            background: rgba(0, 0, 0, 0.2); /* Integrated header background */
-            height: 35px;
+        .ide-header {
+            background: rgba(0,0,0,0.3);
+            padding: 12px 18px;
             display: flex;
             align-items: center;
-            padding-left: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; }
-        .dot-red { background: #ff5f56; } .dot-yellow { background: #ffbd2e; } .dot-green { background: #27c93f; }
+        .dot { height: 12px; width: 12px; border-radius: 50%; margin-right: 8px; }
+        .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
+        .filename { color: #565f89; font-size: 0.4em; font-family: 'Fira Code'; margin-left: 15px; }
 
-        /* Integrated Code Block */
+        /* Code Alignment Overrides */
         .reveal pre {
             margin: 0 !important;
-            width: 100% !important;
-            border-radius: 0 !important; /* Cohesive with window */
             box-shadow: none !important;
+            width: 100% !important;
+            background: transparent !important;
         }
 
         .reveal pre code {
             font-family: 'Fira Code', monospace !important;
-            padding: 25px 30px !important;
-            font-size: 0.9em !important;
+            font-size: 0.8em !important;
             line-height: 1.5 !important;
-            background: var(--ide-window-bg) !important;
-            border: none !important;
-            border-radius: 0 !important;
-            text-align: left !important; /* Perfect left alignment */
+            padding: 25px !important;
+            background: var(--ide-bg) !important;
+            max-height: 500px !important;
+            text-align: left !important;
+            white-space: pre !important; /* Behoudt de C# inspringing */
         }
 
-        /* Correct redundant Mac controls (remove from pre code) */
-        .reveal code::before, .reveal code::after { display: none !important; }
-
-        /* Floating Badge */
         .badge {
             position: absolute;
-            top: -20px;
-            right: 30px;
-            background: linear-gradient(90deg, #8e2de2, #4a00e0);
-            padding: 6px 18px;
-            border-radius: 50px;
-            font-size: 0.45em;
-            font-weight: 700;
+            top: -15px;
+            right: 40px;
+            background: linear-gradient(90deg, #7aa2f7, #bb9af7);
+            color: #1a1b26;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-weight: 900;
+            font-size: 0.4em;
+            text-transform: uppercase;
+            z-index: 100;
             box-shadow: var(--accent-glow);
-            z-index: 10;
         }
+
+        h2 { font-weight: 900 !important; letter-spacing: -2px !important; margin-bottom: 20px !important; }
     </style>
 </head>
 <body>
@@ -124,108 +115,103 @@
 
             <section data-transition="zoom">
                 <div class="glass-card">
-                    <h1 style="font-size: 3em;">Temple of <span class="highlight">Doom</span></h1>
-                    <p style="opacity: 0.7; font-weight: 400;">Advanced Architectural Design Assessment</p>
-                    <div style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; font-size: 0.6em;">
-                        STUDENT IT DEVELOPER | MODULE C | 2026
-                    </div>
+                    <h1 style="font-size: 3.5em;">Temple of <span class="highlight">Doom</span></h1>
+                    <p style="opacity: 0.6; font-size: 1.2em;">Herkansing Code Design | Module C</p>
+                    <div style="margin-top: 60px; height: 2px; background: rgba(255,255,255,0.1); width: 100%;"></div>
+                    <p style="font-size: 0.5em; margin-top: 20px; font-weight: 700; color: var(--accent-purple);">2026 Assessment Deck</p>
                 </div>
             </section>
 
-            <section>
-                <h2>The <span class="highlight">Factory</span> Pattern</h2>
-                <div class="rider-window">
-                    <div class="badge">Creational Pattern</div>
-                    <div class="code-header">
-                        <span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span>
-                        <span style="font-size: 0.45em; opacity: 0.6; margin-left: 15px;">LevelFactory.cs</span>
+            <section data-auto-animate>
+                <h2 data-id="t">The <span class="highlight">Factory</span> Pattern</h2>
+                <div class="ide-window">
+                    <div class="badge">Creational</div>
+                    <div class="ide-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="filename">LevelFactory.cs</span>
                     </div>
-                    <pre><code class="language-csharp" data-trim data-line-numbers="3-10">
-public class LevelFactory {
-    public Level CreateLevel(LevelDto dto) {
-        Level level = new Level();
-        foreach (var roomDto in dto.Rooms) {
-            Room room = new Room(roomDto.Id, roomDto.Width, roomDto.Height);
-            
-            // Parse enemies using the Adapter (Polymorphism)
-            ParseEnemies(room, roomDto.Enemies);
-            
-            level.Rooms.Add(room.Id, room);
-        }
-        return level;
+                    <pre><code class="language-csharp" data-trim>
+public Level CreateLevel(LevelDto dto)
+{
+    var level = new Level { Player = new Player(dto.Player.StartX, dto.Player.StartY, dto.Player.Lives) };
+
+    foreach (var roomDto in dto.Rooms)
+    {
+        var room = new Room(roomDto.Id, roomDto.Width, roomDto.Height);
+        
+        // Factory verwerkt special tiles zoals binnenmuren
+        if (roomDto.SpecialFloorTiles != null)
+            foreach (var tile in roomDto.SpecialFloorTiles)
+                room.SpecialTiles.Add((tile.X, tile.Y), tile.Type);
+
+        // Koppeling met Adapter voor DLL Enemies
+        ParseEnemies(room, roomDto.Enemies);
+        level.Rooms.Add(room.Id, room);
     }
+    return level;
 }
                     </code></pre>
                 </div>
             </section>
 
             <section data-auto-animate>
-                <h2>The <span class="highlight">Observer</span> Pattern</h2>
-                <p style="font-size: 0.7em;">Ontkoppelde communicatie via Events</p>
-                <div class="rider-window">
-                    <div class="badge">Behavioral Pattern</div>
-                    <div class="code-header">
-                        <span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span>
-                        <span style="font-size: 0.45em; opacity: 0.6; margin-left: 15px;">PressurePlate.cs | GameController.cs</span>
+                <h2 data-id="t">The <span class="highlight">Observer</span> Pattern</h2>
+                <div class="ide-window">
+                    <div class="badge">Behavioral</div>
+                    <div class="ide-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="filename">PressurePlate.cs | GameController.cs</span>
                     </div>
-                    <pre data-id="code-anim"><code class="language-csharp" data-trim data-line-numbers="2,5-8|11-13">
-// PressurePlate (Subject)
+                    <pre><code class="language-csharp" data-trim>
+// Subject: PressurePlate vuurt event bij verandering
 public event Action? OnOccupancyChanged;
-public bool IsOccupied {
+public bool IsOccupied
+{
     set { 
-        if (_isOccupied != value) {
-            _isOccupied = value;
-            OnOccupancyChanged?.Invoke(); 
-        }
+        if (_isOccupied == value) return;
+        _isOccupied = value;
+        OnOccupancyChanged?.Invoke(); 
     }
 }
-// GameController (Observer)
-plate.OnOccupancyChanged += () => {
-    if (plates.All(p => p.IsOccupied)) UnlockSwitchDoors();
-};
-                    </code></pre>
-                </div>
-            </section>
 
-            <section data-transition="slide-in fade-out">
-                <h2>The <span class="highlight">Strategy</span> Pattern</h2>
-                <div class="glass-card" style="text-align: left; font-size: 0.6em; margin-bottom: 25px; display: block; padding: 20px 30px;">
-                    ✅ <strong>Open-Closed Principle:</strong> Wisselen van inlaad-algoritme (JSON/XML) zonder core logic te wijzigen.
-                </div>
-                <div class="rider-window">
-                    <div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
-                    <pre><code class="language-csharp" data-trim data-line-numbers="1,6">
-// Interface Defines the Strategy
-public interface ILevelLoader {
-    LevelDto Load(string path);
+// Observer: GameController luistert en reageert
+private void WireObservers()
+{
+    foreach (var plate in currentRoom.Plates)
+    {
+        plate.OnOccupancyChanged += () => {
+            if (plates.All(p => p.IsOccupied)) UnlockSwitchDoors();
+        };
+    }
 }
-
-// Concrete Strategy
-public class JsonLevelLoader : ILevelLoader { ... }
                     </code></pre>
                 </div>
             </section>
 
-            <section data-transition="convex">
+            <section>
                 <h2>The <span class="highlight">Decorator</span> Pattern</h2>
-                <p style="font-size: 0.6em;">Gedrag stapelen zonder inheritance hell.</p>
-                <div class="rider-window">
-                    <div class="badge">Structural Pattern</div>
-                    <div class="code-header">
-                        <span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span>
-                        <span style="font-size: 0.45em; opacity: 0.6; margin-left: 15px;">OpenOnOddDoor.cs</span>
+                <div class="ide-window">
+                    <div class="badge">Structural</div>
+                    <div class="ide-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="filename">OpenOnOddDoor.cs</span>
                     </div>
-                    <pre><code class="language-csharp" data-trim data-line-numbers="2,6-10">
-public class OpenOnOddDoor : IDoor {
-    private readonly IDoor _innerDoor; // Decorated object
+                    <pre><code class="language-csharp" data-trim>
+public class OpenOnOddDoor : IDoor
+{
+    private readonly IDoor _innerDoor; // De 'wrapped' component
+    private readonly Level _level;
 
-    public bool CanEnter(Player player, Room room) {
-        // Decorator Logic (lives rule)
+    public bool CanEnter(Player player, Room room)
+    {
+        // 1. Eigen logica van de Decorator
         if (player.Lives % 2 == 0) return false;
-        
-        // Delegate to original Door
+
+        // 2. Delegeer naar de basis-deur (bijv. ToggleDoor)
         return _innerDoor.CanEnter(player, room);
     }
+
+    public void Unlock() => _innerDoor.Unlock();
 }
                     </code></pre>
                 </div>
@@ -233,40 +219,84 @@ public class OpenOnOddDoor : IDoor {
 
             <section>
                 <h2>The <span class="highlight">Adapter</span> Pattern</h2>
-                <div class="glass-card" style="margin-bottom: 30px; padding: 20px 30px; display: block; text-align: left;">
-                    <p style="font-size: 0.7em;">✅ Koppelt de onstabiele, incompatibele externe <code>DLL_Enemy</code> aan onze eigen <code>Entity</code> base class.</p>
-                </div>
-                <div class="rider-window">
-                    <div class="badge">Structural Pattern</div>
-                    <div class="code-header"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
-                    <pre><code class="language-csharp" data-trim data-line-numbers="2,5-8">
-public class EnemyAdapter : Entity {
-    private readonly External_DLL.Enemy _dllEnemy;
+                <div class="ide-window">
+                    <div class="badge">Structural</div>
+                    <div class="ide-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="filename">EnemyAdapter.cs</span>
+                    </div>
+                    <pre><code class="language-csharp" data-trim>
+public class EnemyAdapter : Entity
+{
+    private readonly CODE_TempleOfDoom_DownloadableContent.Enemy _dllEnemy;
 
-    public override void Move() {
-        // Translate actions to DLL enemy
-        _dllEnemy.UpdatePosition();
-        this.X = _dllEnemy.CurrentX; // Sync position
+    public override void Move()
+    {
+        // Vertaal actie naar de onstabiele school-DLL
+        _dllEnemy.Move();
+        
+        // Synchroniseer coördinaten met ons eigen systeem
+        this.X = _dllEnemy.X;
+        this.Y = _dllEnemy.Y;
     }
 }
                     </code></pre>
                 </div>
             </section>
 
-            <section data-background-color="rgba(189, 147, 249, 0.1)">
+            <section>
+                <h2>The <span class="highlight">Strategy</span> Pattern</h2>
+                <div class="ide-window">
+                    <div class="badge">Open-Closed</div>
+                    <div class="ide-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="filename">ILevelLoader.cs | JsonLevelLoader.cs</span>
+                    </div>
+                    <pre><code class="language-csharp" data-trim>
+// De Strategy Interface
+public interface ILevelLoader 
+{
+    LevelDto Load(string path);
+}
+
+// De Concrete Strategy voor JSON
+public class JsonLevelLoader : ILevelLoader 
+{
+    public LevelDto Load(string path) => 
+        JsonSerializer.Deserialize&lt;LevelDto&gt;(File.ReadAllText(path));
+}
+                    </code></pre>
+                </div>
+            </section>
+
+            <section data-background-color="rgba(189, 147, 249, 0.05)">
                 <h2>Polymorfisme & <span class="highlight">Clean Code</span></h2>
-                <ul style="font-size: 0.85em; list-style: none;">
-                    <li style="margin-bottom: 25px;">✅ <strong>Geen Switch Statements:</strong> <code>item.Interact()</code> ipv type-checks (Code smell).</li>
-                    <li style="margin-bottom: 25px;">✅ <strong>Information Expert:</strong> <code>Room</code> berekent eigen collision logica.</li>
-                    <li style="margin-bottom: 25px;">✅ <strong>Inappropriate Intimacy:</strong> Gefixed via interface abstractie in Decorators.</li>
-                </ul>
+                <div class="ide-window">
+                    <div class="badge">No Switch Smell</div>
+                    <div class="ide-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="filename">GameController.cs</span>
+                    </div>
+                    <pre><code class="language-csharp" data-trim>
+private void HandleItemPickup()
+{
+    var itemOnFloor = currentRoom.GetItemAt(player.X, player.Y);
+    
+    // Geen switch-statement op type! 
+    // Elk item (SankaraStone, Boobytrap) regelt eigen interactie.
+    itemOnFloor?.Interact(_level.Player, currentRoom);
+}
+                    </code></pre>
+                </div>
+                <p style="font-size: 0.6em; opacity: 0.6; margin-top: 20px;">
+                    ✅ Information Expert toegepast: Logica verplaatst van Controller naar Room/Items.
+                </p>
             </section>
 
             <section data-transition="zoom">
-                <h1 class="highlight">Vragen?</h1>
-                <p style="opacity: 0.6;">Bedankt voor de aandacht.</p>
-                <div style="margin-top: 50px;" class="glass-card">
-                    <p style="font-size: 0.5em;">Codebase Status: <strong>Production Ready</strong></p>
+                <h2 class="highlight">Vragen?</h2>
+                <div class="glass-card" style="margin-top: 40px;">
+                    <p style="font-size: 0.8em;">UML Diagram & Documentatie beschikbaar in <strong>README.md</strong></p>
                 </div>
             </section>
 
@@ -281,12 +311,12 @@ public class EnemyAdapter : Entity {
         Reveal.initialize({
             center: true,
             hash: true,
-            transition: 'fade', // slide/fade/convex/concave/zoom
+            transition: 'convex',
             backgroundTransition: 'fade',
             mouseWheel: true,
             plugins: [ { setup: () => {
-                document.querySelectorAll('pre code').forEach((el) => {
-                    hljs.highlightElement(el);
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
                 });
             } } ]
         });
