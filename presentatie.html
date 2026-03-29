@@ -2,324 +2,292 @@
 <html lang="nl">
 <head>
     <meta charset="utf-8">
-    <title>Temple of Doom | Professional Assessment</title>
+    <title>Temple of Doom | Professional Deck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/tokyo-night-dark.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/tokyo-night-dark.min.css">
     
     <style>
         :root {
-            --bg-gradient: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #0f0c29);
-            --accent-purple: #bd93f9;
-            --accent-glow: 0 0 30px rgba(189, 147, 249, 0.4);
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --bg-deep: #0f0c29;
+            --accent-purple: #bb9af7;
             --ide-bg: #1a1b26;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
-        body { background: #000; }
-
+        /* Geanimeerde achtergrond: Subtle & Modern */
         .reveal {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-gradient);
+            background: linear-gradient(-45deg, #0f0c29, #1a1a2e, #16213e, #0f0c29);
             background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            animation: gradient 15s ease infinite;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
         }
 
-        @keyframes gradientBG {
+        @keyframes gradient {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        .highlight { color: var(--accent-purple); text-shadow: var(--accent-glow); }
-
-        /* Glassmorphism Containers */
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        /* Grote, dikke headers */
+        h1, h2, h3 {
+            text-transform: none !important;
+            font-weight: 900 !important;
+            letter-spacing: -2px !important;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* Perfected IDE Window */
-        .ide-window {
+        .highlight { color: var(--accent-purple); }
+
+        /* De IDE Window: Hier zat de fix voor het 'uitsteken' */
+        .editor-window {
             background: var(--ide-bg);
             border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-            border: 1px solid var(--glass-border);
-            width: 100%;
-            max-width: 1000px;
-            margin: 20px auto !important;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            border: 1px solid var(--border);
+            width: 95%;
+            max-width: 1100px;
+            margin: 0 auto !important;
+            overflow: hidden; /* Zorgt dat code niet uitsteekt */
+            display: flex;
+            flex-direction: column;
             text-align: left;
         }
 
-        .ide-header {
-            background: rgba(0,0,0,0.3);
-            padding: 12px 18px;
+        .editor-header {
+            background: rgba(0,0,0,0.4);
+            padding: 15px 20px;
             display: flex;
             align-items: center;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .dot { height: 12px; width: 12px; border-radius: 50%; margin-right: 8px; }
-        .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
-        .filename { color: #565f89; font-size: 0.4em; font-family: 'Fira Code'; margin-left: 15px; }
+        .dots { display: flex; gap: 8px; margin-right: 20px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .close { background: #ff5f56; }
+        .min { background: #ffbd2e; }
+        .max { background: #27c93f; }
+        .tab { color: #565f89; font-family: 'Fira Code'; font-size: 14px; opacity: 0.8; }
 
-        /* Code Alignment Overrides */
+        /* Code Styling: De kern van de leesbaarheid */
         .reveal pre {
             margin: 0 !important;
-            box-shadow: none !important;
             width: 100% !important;
             background: transparent !important;
+            box-shadow: none !important;
         }
 
-        .reveal pre code {
+        .reveal code {
             font-family: 'Fira Code', monospace !important;
-            font-size: 0.8em !important;
-            line-height: 1.5 !important;
-            padding: 25px !important;
+            font-size: 22px !important; /* Groter voor leesbaarheid */
+            line-height: 1.4 !important;
+            padding: 30px !important;
             background: var(--ide-bg) !important;
-            max-height: 500px !important;
+            color: #a9b1d6;
             text-align: left !important;
-            white-space: pre !important; /* Behoudt de C# inspringing */
+            display: block;
+            overflow-x: auto; /* Scrollbar ipv uitsteken */
         }
 
-        .badge {
+        /* Badge voor de rubric onderdelen */
+        .rubric-badge {
             position: absolute;
-            top: -15px;
+            top: 40px;
             right: 40px;
-            background: linear-gradient(90deg, #7aa2f7, #bb9af7);
-            color: #1a1b26;
-            padding: 6px 16px;
-            border-radius: 8px;
-            font-weight: 900;
-            font-size: 0.4em;
+            background: rgba(187, 154, 247, 0.2);
+            border: 1px solid var(--accent-purple);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent-purple);
             text-transform: uppercase;
-            z-index: 100;
-            box-shadow: var(--accent-glow);
         }
 
-        h2 { font-weight: 900 !important; letter-spacing: -2px !important; margin-bottom: 20px !important; }
+        /* Morph effect voor tekst */
+        .reveal .slides section { transition: all 0.5s ease-in-out; }
     </style>
 </head>
 <body>
-    <div class="reveal">
-        <div class="slides">
 
-            <section data-transition="zoom">
-                <div class="glass-card">
-                    <h1 style="font-size: 3.5em;">Temple of <span class="highlight">Doom</span></h1>
-                    <p style="opacity: 0.6; font-size: 1.2em;">Herkansing Code Design | Module C</p>
-                    <div style="margin-top: 60px; height: 2px; background: rgba(255,255,255,0.1); width: 100%;"></div>
-                    <p style="font-size: 0.5em; margin-top: 20px; font-weight: 700; color: var(--accent-purple);">2026 Assessment Deck</p>
+<div class="reveal">
+    <div class="slides">
+
+        <section data-transition="zoom">
+            <div style="background: var(--glass); padding: 60px; border-radius: 30px; border: 1px solid var(--border); backdrop-filter: blur(10px);">
+                <h1 style="font-size: 3.5em; margin: 0;">Temple of <span class="highlight">Doom</span></h1>
+                <p style="opacity: 0.5; font-size: 1.2em; letter-spacing: 2px;">ASSESSMENT CODE DESIGN</p>
+                <div style="margin-top: 50px; font-size: 0.6em; font-weight: 700;">
+                    <span style="color: #7aa2f7;">2026</span> &nbsp; | &nbsp; STUDENT IT DEVELOPER &nbsp; | &nbsp; <span style="color: #bb9af7;">MODULE C</span>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section data-auto-animate>
-                <h2 data-id="t">The <span class="highlight">Factory</span> Pattern</h2>
-                <div class="ide-window">
-                    <div class="badge">Creational</div>
-                    <div class="ide-header">
-                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                        <span class="filename">LevelFactory.cs</span>
-                    </div>
-                    <pre><code class="language-csharp" data-trim>
+        <section data-auto-animate>
+            <div class="rubric-badge">Factory Pattern (10p)</div>
+            <h2 data-id="title">Level <span class="highlight">Factory</span></h2>
+            <div class="editor-window">
+                <div class="editor-header">
+                    <div class="dots"><div class="dot close"></div><div class="dot min"></div><div class="dot max"></div></div>
+                    <div class="tab">LevelFactory.cs</div>
+                </div>
+                <pre><code class="language-csharp" data-trim data-noescape>
 public Level CreateLevel(LevelDto dto)
 {
-    var level = new Level { Player = new Player(dto.Player.StartX, dto.Player.StartY, dto.Player.Lives) };
-
+    var level = new Level();
     foreach (var roomDto in dto.Rooms)
     {
+        // Polymorfisme: Room bepaalt eigen interne logica
         var room = new Room(roomDto.Id, roomDto.Width, roomDto.Height);
         
-        // Factory verwerkt special tiles zoals binnenmuren
-        if (roomDto.SpecialFloorTiles != null)
-            foreach (var tile in roomDto.SpecialFloorTiles)
-                room.SpecialTiles.Add((tile.X, tile.Y), tile.Type);
-
-        // Koppeling met Adapter voor DLL Enemies
+        // Factory ontkoppelt de DTO van het rijke Domain Model
         ParseEnemies(room, roomDto.Enemies);
         level.Rooms.Add(room.Id, room);
     }
     return level;
 }
-                    </code></pre>
-                </div>
-            </section>
+                </code></pre>
+            </div>
+        </section>
 
-            <section data-auto-animate>
-                <h2 data-id="t">The <span class="highlight">Observer</span> Pattern</h2>
-                <div class="ide-window">
-                    <div class="badge">Behavioral</div>
-                    <div class="ide-header">
-                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                        <span class="filename">PressurePlate.cs | GameController.cs</span>
-                    </div>
-                    <pre><code class="language-csharp" data-trim>
-// Subject: PressurePlate vuurt event bij verandering
+        <section data-auto-animate>
+            <div class="rubric-badge">Observer Pattern (10p)</div>
+            <h2 data-id="title">Event-Driven <span class="highlight">Observer</span></h2>
+            <div class="editor-window">
+                <div class="editor-header">
+                    <div class="dots"><div class="dot close"></div><div class="dot min"></div><div class="dot max"></div></div>
+                    <div class="tab">PressurePlate.cs</div>
+                </div>
+                <pre><code class="language-csharp" data-trim data-noescape>
+// Het Subject: Meldt veranderingen aan abonnees
 public event Action? OnOccupancyChanged;
-public bool IsOccupied
+
+public bool IsOccupied 
 {
-    set { 
+    set {
         if (_isOccupied == value) return;
         _isOccupied = value;
-        OnOccupancyChanged?.Invoke(); 
+        // Notificeer de GameController (Observer)
+        OnOccupancyChanged?.Invoke();
     }
 }
+                </code></pre>
+            </div>
+        </section>
 
-// Observer: GameController luistert en reageert
-private void WireObservers()
-{
-    foreach (var plate in currentRoom.Plates)
-    {
-        plate.OnOccupancyChanged += () => {
-            if (plates.All(p => p.IsOccupied)) UnlockSwitchDoors();
-        };
-    }
-}
-                    </code></pre>
+        <section>
+            <div class="rubric-badge">Decorator Pattern (10p)</div>
+            <h2>Door <span class="highlight">Decorator</span></h2>
+            <div class="editor-window">
+                <div class="editor-header">
+                    <div class="dots"><div class="dot close"></div><div class="dot min"></div><div class="dot max"></div></div>
+                    <div class="tab">OpenOnOddDoor.cs</div>
                 </div>
-            </section>
-
-            <section>
-                <h2>The <span class="highlight">Decorator</span> Pattern</h2>
-                <div class="ide-window">
-                    <div class="badge">Structural</div>
-                    <div class="ide-header">
-                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                        <span class="filename">OpenOnOddDoor.cs</span>
-                    </div>
-                    <pre><code class="language-csharp" data-trim>
+                <pre><code class="language-csharp" data-trim data-noescape>
 public class OpenOnOddDoor : IDoor
 {
-    private readonly IDoor _innerDoor; // De 'wrapped' component
-    private readonly Level _level;
+    private readonly IDoor _innerDoor; // Ingepakte component
 
     public bool CanEnter(Player player, Room room)
     {
-        // 1. Eigen logica van de Decorator
+        // 1. Extra gedrag: Check op levens
         if (player.Lives % 2 == 0) return false;
 
-        // 2. Delegeer naar de basis-deur (bijv. ToggleDoor)
+        // 2. Delegeer naar de oorspronkelijke deur
         return _innerDoor.CanEnter(player, room);
     }
-
-    public void Unlock() => _innerDoor.Unlock();
 }
-                    </code></pre>
-                </div>
-            </section>
+                </code></pre>
+            </div>
+        </section>
 
-            <section>
-                <h2>The <span class="highlight">Adapter</span> Pattern</h2>
-                <div class="ide-window">
-                    <div class="badge">Structural</div>
-                    <div class="ide-header">
-                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                        <span class="filename">EnemyAdapter.cs</span>
-                    </div>
-                    <pre><code class="language-csharp" data-trim>
+        <section>
+            <div class="rubric-badge">Adapter Pattern (10p)</div>
+            <h2>DLL <span class="highlight">Adapter</span></h2>
+            <div class="editor-window">
+                <div class="editor-header">
+                    <div class="dots"><div class="dot close"></div><div class="dot min"></div><div class="dot max"></div></div>
+                    <div class="tab">EnemyAdapter.cs</div>
+                </div>
+                <pre><code class="language-csharp" data-trim data-noescape>
 public class EnemyAdapter : Entity
 {
-    private readonly CODE_TempleOfDoom_DownloadableContent.Enemy _dllEnemy;
+    private readonly ExternalDLL.Enemy _dllEnemy;
 
     public override void Move()
     {
-        // Vertaal actie naar de onstabiele school-DLL
+        // Vertaal acties naar de onstabiele school-DLL
         _dllEnemy.Move();
         
-        // Synchroniseer coördinaten met ons eigen systeem
+        // Sync coördinaten tussen systemen
         this.X = _dllEnemy.X;
         this.Y = _dllEnemy.Y;
     }
 }
-                    </code></pre>
+                </code></pre>
+            </div>
+        </section>
+
+        <section data-background-color="rgba(187, 154, 247, 0.05)">
+            <div class="rubric-badge">Clean Code (15p)</div>
+            <h2>Polymorfisme vs <span class="highlight">Switch</span></h2>
+            <div class="editor-window">
+                <div class="editor-header">
+                    <div class="dots"><div class="dot close"></div><div class="dot min"></div><div class="dot max"></div></div>
+                    <div class="tab">GameController.cs</div>
                 </div>
-            </section>
-
-            <section>
-                <h2>The <span class="highlight">Strategy</span> Pattern</h2>
-                <div class="ide-window">
-                    <div class="badge">Open-Closed</div>
-                    <div class="ide-header">
-                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                        <span class="filename">ILevelLoader.cs | JsonLevelLoader.cs</span>
-                    </div>
-                    <pre><code class="language-csharp" data-trim>
-// De Strategy Interface
-public interface ILevelLoader 
-{
-    LevelDto Load(string path);
-}
-
-// De Concrete Strategy voor JSON
-public class JsonLevelLoader : ILevelLoader 
-{
-    public LevelDto Load(string path) => 
-        JsonSerializer.Deserialize&lt;LevelDto&gt;(File.ReadAllText(path));
-}
-                    </code></pre>
-                </div>
-            </section>
-
-            <section data-background-color="rgba(189, 147, 249, 0.05)">
-                <h2>Polymorfisme & <span class="highlight">Clean Code</span></h2>
-                <div class="ide-window">
-                    <div class="badge">No Switch Smell</div>
-                    <div class="ide-header">
-                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                        <span class="filename">GameController.cs</span>
-                    </div>
-                    <pre><code class="language-csharp" data-trim>
+                <pre><code class="language-csharp" data-trim data-noescape>
 private void HandleItemPickup()
 {
-    var itemOnFloor = currentRoom.GetItemAt(player.X, player.Y);
+    var item = currentRoom.GetItemAt(player.X, player.Y);
     
-    // Geen switch-statement op type! 
-    // Elk item (SankaraStone, Boobytrap) regelt eigen interactie.
-    itemOnFloor?.Interact(_level.Player, currentRoom);
+    // GEEN Switch-statement meer op type! (Code Smell gefixed)
+    // Elk Item (SankaraStone, Boobytrap) regelt eigen interactie.
+    item?.Interact(_level.Player, currentRoom);
 }
-                    </code></pre>
-                </div>
-                <p style="font-size: 0.6em; opacity: 0.6; margin-top: 20px;">
-                    ✅ Information Expert toegepast: Logica verplaatst van Controller naar Room/Items.
-                </p>
-            </section>
+                </code></pre>
+            </div>
+            <p style="font-size: 0.5em; opacity: 0.6; margin-top: 30px;">
+                ✅ <strong>Information Expert</strong> toegepast: Logica ligt bij de data-eigenaar.
+            </p>
+        </section>
 
-            <section data-transition="zoom">
-                <h2 class="highlight">Vragen?</h2>
-                <div class="glass-card" style="margin-top: 40px;">
-                    <p style="font-size: 0.8em;">UML Diagram & Documentatie beschikbaar in <strong>README.md</strong></p>
-                </div>
-            </section>
+        <section data-transition="convex">
+            <h1 class="highlight">Vragen?</h1>
+            <p style="opacity: 0.5;">Bedankt voor jullie aandacht.</p>
+            <div style="margin-top: 100px; font-size: 0.4em; opacity: 0.3;">
+                Console Application &nbsp; • &nbsp; Design Patterns &nbsp; • &nbsp; SOLID Principles
+            </div>
+        </section>
 
-        </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/languages/csharp.min.js"></script>
-    
-    <script>
-        Reveal.initialize({
-            center: true,
-            hash: true,
-            transition: 'convex',
-            backgroundTransition: 'fade',
-            mouseWheel: true,
-            plugins: [ { setup: () => {
-                document.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightElement(block);
-                });
-            } } ]
-        });
-    </script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/csharp.min.js"></script>
+
+<script>
+    Reveal.initialize({
+        center: true,
+        hash: true,
+        mouseWheel: true,
+        transition: 'fade',
+        backgroundTransition: 'slide',
+        plugins: [ { setup: () => {
+            // Forceert syntax highlighting na het laden van de slides
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        } } ]
+    });
+</script>
+
 </body>
 </html>
