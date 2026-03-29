@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8">
+    <title>Temple of Doom - Assessment Presentatie</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/dracula.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/base16/dracula.min.css">
+    <style>
+        .reveal pre { width: 100%; font-size: 0.5em; }
+        .reveal h2 { color: #ff79c6; }
+        .reveal h3 { color: #8be9fd; }
+        .points { position: absolute; top: 0; right: 0; font-size: 0.6em; color: #6272a4; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <h1>Temple of Doom</h1>
+                <h3>Assessment Code Design</h3>
+                <p>Door: Je Naam</p>
+                <div class="points">Functionaliteit & Kwaliteit (10p)</div>
+                <aside class="notes">
+                    Vertel hier dat alle Module C uitbreidingen (binnendeuren, enemies uit DLL, etc) volledig werken zonder crashes.
+                </aside>
+            </section>
+
+            <section>
+                <h2>Design Pattern: Factory</h2>
+                <div class="points">Observer + Factory (10p)</div>
+                <p>Centralisatie van objectcreatie en DTO-mapping.</p>
+                <pre><code class="language-csharp">
+public class LevelFactory {
+    public Level CreateLevel(LevelDto dto) {
+        // Omzetten van JSON DTO naar rijke domein-objecten
+        foreach (var roomDto in dto.Rooms) {
+            var room = new Room(roomDto.Id, roomDto.Width, roomDto.Height);
+            // ... logica voor enemies, items en deuren
+            level.Rooms.Add(room.Id, room);
+        }
+        return level;
+    }
+}
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Design Pattern: Observer</h2>
+                <div class="points">Observer + Factory (10p)</div>
+                <p>Event-driven communicatie voor Pressure Plates.</p>
+                <pre><code class="language-csharp">
+// PressurePlate (Subject)
+public event Action? OnOccupancyChanged;
+public bool IsOccupied {
+    set { _isOccupied = value; OnOccupancyChanged?.Invoke(); }
+}
+
+// GameController (Observer)
+private void WireObservers() {
+    plate.OnOccupancyChanged += () => {
+        if (plates.All(p => p.IsOccupied)) UnlockDoors();
+    };
+}
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Design Pattern: Strategy</h2>
+                <div class="points">Strategy (10p)</div>
+                <p>Inwisselbare Level Loaders (Open-Closed Principle).</p>
+                <pre><code class="language-csharp">
+public interface ILevelLoader {
+    LevelDto Load(string path);
+}
+
+public class JsonLevelLoader : ILevelLoader {
+    public LevelDto Load(string path) {
+        // JSON specifieke implementatie
+    }
+}
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Design Pattern: Decorator</h2>
+                <div class="points">Decorator (10p)</div>
+                <p>Dynamisch gedrag toevoegen zonder klassen te wijzigen.</p>
+                <pre><code class="language-csharp">
+public class OpenOnOddDoor : IDoor {
+    private readonly IDoor _innerDoor;
+    
+    public bool CanEnter(Player player, Room room) {
+        // Eerst eigen regel (oneven levens), dan binnenste deur
+        if (player.Lives % 2 == 0) return false;
+        return _innerDoor.CanEnter(player, room);
+    }
+}
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Design Pattern: Adapter</h2>
+                <div class="points">Adapter (10p)</div>
+                <p>Incompatibele DLL-interface koppelen aan eigen framework.</p>
+                <pre><code class="language-csharp">
+public class EnemyAdapter : Entity {
+    private readonly CODE_TempleOfDoom_DownloadableContent.Enemy _dllEnemy;
+
+    public void Move() {
+        // Vertaal actie naar de DLL vijand
+        _dllEnemy.Move();
+        this.X = _dllEnemy.X;
+        this.Y = _dllEnemy.Y;
+    }
+}
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Polymorfisme & Code Smells</h2>
+                <div class="points">Polymorfisme (15p) | Smells (15p)</div>
+                <p>Oplossen van de 'Switch Statement' en 'God Class'.</p>
+                <pre><code class="language-csharp">
+// Geabstraheerde interactie (Polymorfisme)
+public abstract class Item : Entity {
+    public abstract void Interact(Player player, Room room);
+}
+
+// In de controller (Geen Switch meer nodig!)
+private void HandleItemPickup() {
+    itemOnFloor?.Interact(_level.Player, currentRoom);
+}
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>UML Klassendiagram</h2>
+                <div class="points">UML Diagrammen (10p)</div>
+                <p>Zie README.md voor de volledige Mermaid-rendering.</p>
+                <ul style="font-size: 0.7em;">
+                    <li><strong>Compositie:</strong> Level bevat Rooms en Player.</li>
+                    <li><strong>Inheritance:</strong> Entity is de base voor Item en Player.</li>
+                    <li><strong>Realization:</strong> Deuren implementeren de IDoor interface.</li>
+                </ul>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/languages/csharp.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            plugins: [ { setup: () => hljs.highlightAll() } ]
+        });
+    </script>
+</body>
+</html>
