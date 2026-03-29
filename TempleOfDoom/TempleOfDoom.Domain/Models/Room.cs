@@ -22,7 +22,13 @@ public class Room
 
     public bool IsWall(int x, int y)
     {
-        return x == 0 || y == 0 || x == Width - 1 || y == Height - 1;
+        // Check 1: Is het de buitenrand?
+        if (x == 0 || y == 0 || x == Width - 1 || y == Height - 1) return true;
+        
+        // Check 2: Is het een binnenmuur uit Module C?
+        if (SpecialTiles.TryGetValue((x, y), out string tileType) && tileType == "wall") return true;
+
+        return false;
     }
 
     public bool IsEdgeDoor(int x, int y, out string direction)
